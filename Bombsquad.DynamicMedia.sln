@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoSite", "DemoSite\DemoSite.csproj", "{3015885B-2336-4640-B65C-5605EE113811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.Exif", "Bombsquad.Exif\Bombsquad.Exif.csproj", "{471250E0-50B5-4D3E-8CC5-996EB68533BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.DynamicMedia", "Bombsquad.DynamicMedia\Bombsquad.DynamicMedia.csproj", "{ADC28500-E9DC-4459-AD85-1ED93C35FA55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.DynamicMedia.Less", "Bombsquad.DynamicMedia.Less\Bombsquad.DynamicMedia.Less.csproj", "{2646E197-C415-45D2-863F-D826E30DB605}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.DynamicMedia.Minify", "Bombsquad.DynamicMedia.Minify\Bombsquad.DynamicMedia.Minify.csproj", "{D245E4EA-3577-42CD-839A-A94B1A8CA988}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.DynamicMedia.Imaging", "Bombsquad.DynamicMedia.Imaging\Bombsquad.DynamicMedia.Imaging.csproj", "{A32E9DFC-2693-418F-88CA-3AAB034075C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bombsquad.DynamicMedia.CombineCss", "Bombsquad.DynamicMedia.CombineCss\Bombsquad.DynamicMedia.CombineCss.csproj", "{10F845FE-5602-46E0-B74D-4EAA69050835}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3015885B-2336-4640-B65C-5605EE113811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3015885B-2336-4640-B65C-5605EE113811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3015885B-2336-4640-B65C-5605EE113811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3015885B-2336-4640-B65C-5605EE113811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{471250E0-50B5-4D3E-8CC5-996EB68533BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{471250E0-50B5-4D3E-8CC5-996EB68533BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{471250E0-50B5-4D3E-8CC5-996EB68533BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{471250E0-50B5-4D3E-8CC5-996EB68533BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC28500-E9DC-4459-AD85-1ED93C35FA55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC28500-E9DC-4459-AD85-1ED93C35FA55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC28500-E9DC-4459-AD85-1ED93C35FA55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC28500-E9DC-4459-AD85-1ED93C35FA55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2646E197-C415-45D2-863F-D826E30DB605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2646E197-C415-45D2-863F-D826E30DB605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2646E197-C415-45D2-863F-D826E30DB605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2646E197-C415-45D2-863F-D826E30DB605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D245E4EA-3577-42CD-839A-A94B1A8CA988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D245E4EA-3577-42CD-839A-A94B1A8CA988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D245E4EA-3577-42CD-839A-A94B1A8CA988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D245E4EA-3577-42CD-839A-A94B1A8CA988}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A32E9DFC-2693-418F-88CA-3AAB034075C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A32E9DFC-2693-418F-88CA-3AAB034075C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A32E9DFC-2693-418F-88CA-3AAB034075C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A32E9DFC-2693-418F-88CA-3AAB034075C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10F845FE-5602-46E0-B74D-4EAA69050835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10F845FE-5602-46E0-B74D-4EAA69050835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10F845FE-5602-46E0-B74D-4EAA69050835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10F845FE-5602-46E0-B74D-4EAA69050835}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
