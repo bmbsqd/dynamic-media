@@ -4,3 +4,5 @@
 /Bombsquad.DynamicMedia.suo
 /_ReSharper.Bombsquad.DynamicMedia
 /DemoSite/Cache
+bin/
+obj/
