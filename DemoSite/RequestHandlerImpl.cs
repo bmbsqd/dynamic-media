@@ -8,6 +8,7 @@ using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Imaging;
 using Bombsquad.DynamicMedia.Implementations;
 using Bombsquad.DynamicMedia.Less;
+using Bombsquad.DynamicMedia.Markdown;
 using Bombsquad.DynamicMedia.Minify;
 
 namespace DemoSite
@@ -34,7 +35,8 @@ namespace DemoSite
                 new CssLessMediaTransformerFactory(),
                 new CombineCssMediaTransformerFactory(),
                 new EmbedAsBase64CssMediaTransformerFactory(), 
-                new MinifyingMediaTransformerFactory()
+                new MinifyingMediaTransformerFactory(),
+                new MarkdownMediaTransformerFactory()
             });
 
             _formatInfoResolver = new FormatInfoResolver((FormatInfoResolverConfiguration)ConfigurationManager.GetSection("dynamicMediaFormatMappings"));

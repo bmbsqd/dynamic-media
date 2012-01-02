@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Storage\BackgroundImage.css" />
+    <None Include="Storage\Examples.md" />
     <Content Include="Storage\Imports.css" />
     <Content Include="Storage\Examples.html" />
     <Content Include="Storage\Javascript.js" />
@@ -66,6 +67,10 @@
     <ProjectReference Include="..\Bombsquad.DynamicMedia.Less\Bombsquad.DynamicMedia.Less.csproj">
       <Project>{2646E197-C415-45D2-863F-D826E30DB605}</Project>
       <Name>Bombsquad.DynamicMedia.Less</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bombsquad.DynamicMedia.Markdown\Bombsquad.DynamicMedia.Markdown.csproj">
+      <Project>{C14CE2E4-68AA-4500-B123-C4186B5B6B5E}</Project>
+      <Name>Bombsquad.DynamicMedia.Markdown</Name>
     </ProjectReference>
     <ProjectReference Include="..\Bombsquad.DynamicMedia.Minify\Bombsquad.DynamicMedia.Minify.csproj">
       <Project>{D245E4EA-3577-42CD-839A-A94B1A8CA988}</Project>
