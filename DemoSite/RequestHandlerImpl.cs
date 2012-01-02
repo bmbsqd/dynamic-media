@@ -23,8 +23,8 @@ namespace DemoSite
             var storageRoot = new DirectoryInfo(HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["StorageRoot"]));
             var cacheRoot = new DirectoryInfo(HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["CacheRoot"]));
 
-            _mediaCache = new FileSystemMediaCache(cacheRoot);
-            //_mediaCache = new NullMediaCache();
+            //_mediaCache = new FileSystemMediaCache(cacheRoot);
+            _mediaCache = new NullMediaCache();
             _storageBackend = new FileSystemStorageBackend(storageRoot);
             _mediaTransformerFactory = new CompositeMediaTransformerFactory(new IMediaTransformerFactory[]
             {
@@ -32,6 +32,7 @@ namespace DemoSite
                 new ImageMediaTransformerFactory(),
                 new CssLessMediaTransformerFactory(),
                 new CombineCssMediaTransformerFactory(),
+                new EmbedAsBase64CssMediaTransformerFactory(), 
                 new MinifyingMediaTransformerFactory()
             });
 

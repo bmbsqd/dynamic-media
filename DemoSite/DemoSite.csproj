@@ -33,13 +33,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Storage\BackgroundImage.css" />
     <Content Include="Storage\Imports.css" />
     <Content Include="Storage\Examples.html" />
     <Content Include="Storage\Javascript.js" />
     <Content Include="Storage\Koala.jpg" />
     <Content Include="Storage\Stylesheet.css" />
     <None Include="Storage\Stylesheet.less" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
