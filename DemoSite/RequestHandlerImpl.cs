@@ -3,6 +3,7 @@ using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia;
 using Bombsquad.DynamicMedia.CombineCss;
+using Bombsquad.DynamicMedia.Configuration;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Imaging;
 using Bombsquad.DynamicMedia.Implementations;
@@ -16,7 +17,7 @@ namespace DemoSite
         private readonly IMediaCache _mediaCache;
         private readonly IStorageBackend _storageBackend;
         private readonly IMediaTransformerFactory _mediaTransformerFactory;
-        private readonly RegistryFormatInfoResolver _formatInfoResolver;
+        private readonly FormatInfoResolver _formatInfoResolver;
 
         public RequestHandlerImpl()
         {
@@ -36,9 +37,7 @@ namespace DemoSite
                 new MinifyingMediaTransformerFactory()
             });
 
-            _formatInfoResolver = new RegistryFormatInfoResolver();
-            _formatInfoResolver.AddSpecialFormatInfo(".less", "stylesheet/less");
-            _formatInfoResolver.AddSpecialFormatInfo(".js", "text/javascript");
+            _formatInfoResolver = new FormatInfoResolver((FormatInfoResolverConfiguration)ConfigurationManager.GetSection("dynamicMediaFormatMappings"));
         }
 
         protected override IMediaCache MediaCache { get { return _mediaCache; } }

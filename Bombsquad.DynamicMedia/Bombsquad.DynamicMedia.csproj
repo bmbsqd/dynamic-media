@@ -32,15 +32,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\FormatInfoResolverConfiguration.cs" />
     <Compile Include="Contracts\IFormatInfo.cs" />
     <Compile Include="Contracts\IFormatInfoResolver.cs" />
     <Compile Include="Implementations\CompositeMediaTransformer.cs" />
     <Compile Include="Implementations\FileSystemBasedMediaCache.cs" />
+    <Compile Include="Implementations\FormatInfoResolver.cs" />
     <Compile Include="Implementations\NullMediaCache.cs" />
-    <Compile Include="Implementations\RegistryFormatInfoResolver.cs" />
     <Compile Include="Implementations\FormatInfo.cs" />
     <Compile Include="Contracts\IMediaCache.cs" />
     <Compile Include="Contracts\IStorageBackend.cs" />
