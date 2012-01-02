@@ -22,7 +22,7 @@ namespace Bombsquad.DynamicMedia.CombineCss
 
         private static readonly Regex BackgroundImagesRexgex = new Regex(@"background-image:\s+url\s*\((?<Url>.*)\);", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             string content;
 
@@ -31,12 +31,17 @@ namespace Bombsquad.DynamicMedia.CombineCss
                 content = reader.ReadToEnd();
             }
 
-            return ServeResultString(MergeCss(content));
+            string mergedCss;
+            var result = MergeCss(content, out mergedCss);
+            transformedStream = ServeResultString(mergedCss);
+            return result;
         }
 
-        private string MergeCss(string content)
+        private MediaTransformResult MergeCss(string content, out string mergedCss)
         {
-            return BackgroundImagesRexgex.Replace(content, delegate(Match m)
+            var result = MediaTransformResult.Success;
+            
+            mergedCss = BackgroundImagesRexgex.Replace(content, delegate(Match m)
             {
                 var url = m.Groups["Url"].Value.Trim(new[] { '\'', '"' });
 
@@ -44,6 +49,7 @@ namespace Bombsquad.DynamicMedia.CombineCss
                 string contentType;
                 if (!TryGetResourceAsBase64(new Uri(_requestUri, url), out base64, out contentType))
                 {
+                    result = MediaTransformResult.FailedWithFallback;
                     return m.Value;
                 }
 
@@ -55,6 +61,7 @@ namespace Bombsquad.DynamicMedia.CombineCss
                 output.Append(");");
                 return output.ToString();
             });
+            return result;
         }
 
         private bool TryGetResourceAsBase64(Uri url, out string base64, out string contentType)

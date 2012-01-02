@@ -21,25 +21,37 @@ namespace Bombsquad.DynamicMedia.CombineCss
 
         private static readonly Regex CssImportRegex = new Regex(@"@import\s+url\s*\((?<StylesheetUrl>.*)\);", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             string content;
 
-            using( var reader = new StreamReader(stream) )
+            using (var reader = new StreamReader(stream))
             {
                 content = reader.ReadToEnd();
             }
 
-            return ServeResultString(MergeCss(content));
+            string mergedCss;
+            var result = MergeCss(content, out mergedCss);
+            transformedStream = ServeResultString(mergedCss);
+            return result;
         }
 
-        private string MergeCss(string content)
+        private MediaTransformResult MergeCss(string content, out string mergedCss)
         {
-            return CssImportRegex.Replace(content, delegate(Match m)
+            var result = MediaTransformResult.Success;
+            mergedCss = CssImportRegex.Replace(content, delegate(Match m)
             {
-                var stylesheetUrl = m.Groups["StylesheetUrl"].Value.Trim(new[] {'\'', '"'});
-                return GetStylesheetContent(new Uri(_requestUri, stylesheetUrl));
+                var stylesheetUrl = m.Groups["StylesheetUrl"].Value.Trim(new[] { '\'', '"' });
+                string downloadedContent;
+                if (TryGetStylesheetContent(new Uri(_requestUri, stylesheetUrl), out downloadedContent))
+                {
+                    return downloadedContent;
+                }
+
+                result = MediaTransformResult.FailedWithFallback;
+                return m.Value;
             });
+            return result;
         }
 
         private static Stream ServeResultString(string content)
@@ -52,15 +64,24 @@ namespace Bombsquad.DynamicMedia.CombineCss
             return output;
         }
 
-        private string GetStylesheetContent(Uri url)
+        private bool TryGetStylesheetContent(Uri url, out string content)
         {
-            var request = WebRequest.Create(url);
-            using(var response = request.GetResponse())
+            try
             {
-                using(var reader = new StreamReader(response.GetResponseStream()))
+                var request = WebRequest.Create(url);
+                using (var response = request.GetResponse())
                 {
-                    return reader.ReadToEnd();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        content = reader.ReadToEnd();
+                        return true;
+                    }
                 }
+            }
+            catch
+            {
+                content = null;
+                return false;
             }
         }
 

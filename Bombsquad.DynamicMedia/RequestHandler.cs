@@ -35,23 +35,40 @@ namespace Bombsquad.DynamicMedia
                 return;
             }
 
-            if (!transformMedia)
+            if (transformMedia)
             {
-                ServeResultAndAddToCache(MediaCache, request, original, outputFormat, response);
-                return;
+                TransformMedia(response, original, outputFormat, request, mediaTransformer);
+            }
+            else
+            {
+                ServeOriginal(response, request, original, outputFormat);
             }
 
-            var stream = mediaTransformer.TransformStream(request, original);
             original.Dispose();
-            ServeResultAndAddToCache(MediaCache, request, stream, outputFormat, response);
         }
 
-        private void ServeResultAndAddToCache(IMediaCache mediaCache, HttpRequestWrapper request, Stream stream, IFormatInfo outputFormat, HttpResponseWrapper response)
+        private void ServeOriginal(HttpResponseWrapper response, HttpRequestWrapper request, Stream original,
+                                   IFormatInfo outputFormat)
         {
-            ServeResultStream(stream, outputFormat, response);
-            stream.Seek(0, SeekOrigin.Begin);
+            ServeResultStream(original, outputFormat, response);
+            original.Seek(0, SeekOrigin.Begin);
 
-            mediaCache.AddToCache(request, stream, outputFormat);
+            MediaCache.AddToCache(request, original, outputFormat);
+        }
+
+        private void TransformMedia(HttpResponseBase response, Stream original, IFormatInfo outputFormat,
+                                    HttpRequestBase request, IMediaTransformer mediaTransformer)
+        {
+            Stream stream;
+            var result = mediaTransformer.TransformStream(request, original, out stream);
+
+            ServeResultStream(stream, outputFormat, response);
+
+            if (result == MediaTransformResult.Success)
+            {
+                MediaCache.AddToCache(request, stream, outputFormat);
+            }
+
             stream.Dispose();
         }
 
@@ -66,7 +83,7 @@ namespace Bombsquad.DynamicMedia
             response.Output.Write("Resource not found.");
         }
 
-        protected virtual void ServeResultStream(Stream stream, IFormatInfo outputFormat, HttpResponseWrapper response)
+        protected virtual void ServeResultStream(Stream stream, IFormatInfo outputFormat, HttpResponseBase response)
         {
             response.ContentType = outputFormat.ContentType;
             stream.CopyTo(response.OutputStream);

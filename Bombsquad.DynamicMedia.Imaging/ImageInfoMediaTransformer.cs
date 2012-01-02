@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -20,27 +21,28 @@ namespace Bombsquad.DynamicMedia.Imaging
             OutputFormat = outputFormat;
         }
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             var bitmap = BitmapFrame.Create(stream);
             var exifData = _exifParser.Parse(bitmap);
-            var output = new MemoryStream();
+            
+            transformedStream = new MemoryStream();
 
             if (OutputFormat.ContentType == "application/json")
             {
-                RenderJson(exifData, output);
+                RenderJson(exifData, transformedStream);
             }
             
             if( OutputFormat.ContentType == "text/xml" )
             {
-                RenderXml(exifData, output);
+                RenderXml(exifData, transformedStream);
             }
 
-            output.Seek(0, SeekOrigin.Begin);
-            return output;
+            transformedStream.Seek(0, SeekOrigin.Begin);
+            return MediaTransformResult.Success;
         }
 
-        private void RenderXml(ExifData exifData, MemoryStream output)
+        private void RenderXml(ExifData exifData, Stream output)
         {
             var serializer = new DataContractSerializer(typeof(ExifData));
             var writer = XmlWriter.Create(output);
@@ -48,8 +50,9 @@ namespace Bombsquad.DynamicMedia.Imaging
             writer.Flush();
         }
 
-        private void RenderJson(ExifData exifData, MemoryStream output)
+        private void RenderJson(ExifData exifData, Stream output)
         {
+            if (output == null) throw new ArgumentNullException("output");
             var serializer = new DataContractJsonSerializer(typeof(ExifData));
             serializer.WriteObject(output, exifData);
         }

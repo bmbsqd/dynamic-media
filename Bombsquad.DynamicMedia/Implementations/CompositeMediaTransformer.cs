@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,9 +26,21 @@ namespace Bombsquad.DynamicMedia.Implementations
             _transformers.Add(transformer);
         }
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
-            return _transformers.Aggregate(stream, (current, transformer) => transformer.TransformStream(request, current));
+            transformedStream = stream;
+            var worstResult = MediaTransformResult.Success;
+            
+            foreach (var transformer in _transformers)
+            {
+                var mediaTransformResult = transformer.TransformStream(request, transformedStream, out transformedStream);
+                if(mediaTransformResult > worstResult)
+                {
+                    worstResult = mediaTransformResult;
+                }
+            }
+
+            return worstResult;
         }
 
         public IFormatInfo OutputFormat

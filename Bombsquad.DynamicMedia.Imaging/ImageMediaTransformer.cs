@@ -20,7 +20,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             OutputFormat = formatInfo;
         }
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
             BitmapSource bitmapSource = decoder.Frames[0];
@@ -28,11 +28,11 @@ namespace Bombsquad.DynamicMedia.Imaging
 
             _encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
 
-            var output = new MemoryStream();
-            _encoder.Save(output);
-            output.Seek(0, SeekOrigin.Begin);
+            transformedStream = new MemoryStream();
+            _encoder.Save(transformedStream);
+            transformedStream.Seek(0, SeekOrigin.Begin);
 
-            return output;
+            return MediaTransformResult.Success;
         }
 
         public IFormatInfo OutputFormat { get; private set; }

@@ -15,7 +15,7 @@ namespace Bombsquad.DynamicMedia.Less
             _modifyAbsolutePathFunction = modifyAbsolutePathFunction;
         }
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             string less;
             using (var reader = new StreamReader(stream))
@@ -24,12 +24,12 @@ namespace Bombsquad.DynamicMedia.Less
             }
 
             var parsed = dotless.Core.Less.Parse(less);
-            var output = new MemoryStream();
-            var streamWriter = new StreamWriter(output);
+            transformedStream = new MemoryStream();
+            var streamWriter = new StreamWriter(transformedStream);
             streamWriter.Write(parsed);
             streamWriter.Flush();
-            output.Seek(0, SeekOrigin.Begin);
-            return output;
+            transformedStream.Seek(0, SeekOrigin.Begin);
+            return MediaTransformResult.Success;
         }
 
         public IFormatInfo OutputFormat { get; private set; }

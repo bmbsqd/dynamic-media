@@ -17,7 +17,7 @@ namespace Bombsquad.DynamicMedia.Minify
             _modifyAbsolutePathFunction = modifyAbsolutePathFunction;
         }
 
-        public Stream TransformStream(HttpRequestBase request, Stream stream)
+        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
         {
             string content;
 
@@ -26,12 +26,12 @@ namespace Bombsquad.DynamicMedia.Minify
                 content = reader.ReadToEnd();
             }
 
-            var output = new MemoryStream();
-            var writer = new StreamWriter(output);
+            transformedStream = new MemoryStream();
+            var writer = new StreamWriter(transformedStream);
             writer.Write(_minifyFunction(content));
             writer.Flush();
-            output.Seek(0, SeekOrigin.Begin);
-            return output;
+            transformedStream.Seek(0, SeekOrigin.Begin);
+            return MediaTransformResult.Success;
         }
 
         public IFormatInfo OutputFormat { get; private set; }
