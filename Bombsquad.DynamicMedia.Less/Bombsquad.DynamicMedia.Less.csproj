@@ -38,7 +38,6 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CssLessMediaTransformer.cs" />
     <Compile Include="CssLessMediaTransformerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

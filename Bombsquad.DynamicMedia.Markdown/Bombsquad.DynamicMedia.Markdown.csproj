@@ -39,7 +39,6 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MarkdownMediaTransformer.cs" />
     <Compile Include="MarkdownMediaTransformerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

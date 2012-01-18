@@ -38,8 +38,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MinifyingMediaTransformer.cs" />
-    <Compile Include="MinifyingMediaTransformerFactory.cs" />
+    <Compile Include="CssMinifyingMediaTransformerFactory.cs" />
+    <Compile Include="JavascriptMinifyingMediaTransformerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,28 +1,77 @@
 using System;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Implementations;
 
 namespace Bombsquad.DynamicMedia.CombineCss
 {
-    public class EmbedAsBase64CssMediaTransformerFactory : IMediaTransformerFactory
+    public class EmbedAsBase64CssMediaTransformerFactory : TransformerFactoryTextBase
     {
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        protected override bool IsValidFilePath(string absolutePath)
         {
-            if (!request.Url.AbsolutePath.Contains(".embed."))
-            {
-                mediaTransformer = null;
-                return false;
-            }
+            return absolutePath.Contains(".embed.");
+        }
 
-            if (!string.Equals(originalFormat.ContentType, "text/css", StringComparison.InvariantCultureIgnoreCase))
-            {
-                mediaTransformer = null;
-                return false;
-            }
+        protected override bool CanHandleFormat(IFormatInfo format)
+        {
+            return string.Equals(format.ContentType, "text/css", StringComparison.InvariantCultureIgnoreCase);
+        }
 
-            Func<string, string> modifyAbsolutePathFunc = (absolutePath => absolutePath.Replace(".embed", ""));
-            mediaTransformer = new EmbedAsBase64CssMediaTransformer(request.Url, originalFormat, modifyAbsolutePathFunc);
-            return true;
+        protected override string ModifyAbsolutePath(string absolutePath)
+        {
+            return absolutePath.Replace(".embed", "");
+        }
+
+        private static readonly Regex BackgroundImagesRexgex = new Regex(@"background-image:\s+url\s*\((?<Url>.*)\);", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        protected override MediaTransformResult TransformText(string text, out string transformedText)
+        {
+            var result = MediaTransformResult.Success;
+
+            transformedText = BackgroundImagesRexgex.Replace(text, delegate(Match m)
+            {
+                var url = m.Groups["Url"].Value.Trim(new[] { '\'', '"' });
+
+                string base64;
+                string contentType;
+                if (!TryGetResourceAsBase64(new Uri(HttpContext.Current.Request.Url, url), out base64, out contentType))
+                {
+                    result = MediaTransformResult.FailedWithFallback;
+                    return m.Value;
+                }
+
+                var output = new StringBuilder();
+                output.Append("background-image: url(data:");
+                output.Append(contentType);
+                output.Append(";base64,");
+                output.Append(base64);
+                output.Append(");");
+                return output.ToString();
+            });
+            return result;
+        }
+
+        private bool TryGetResourceAsBase64(Uri url, out string base64, out string contentType)
+        {
+            var request = WebRequest.Create(url);
+            using (var response = request.GetResponse())
+            {
+                contentType = response.ContentType;
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var memoryStream = new MemoryStream((int)response.ContentLength))
+                    {
+                        stream.CopyTo(memoryStream);
+                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        base64 = Convert.ToBase64String(memoryStream.ToArray());
+                        return true;
+                    }
+                }
+            }
         }
     }
 }

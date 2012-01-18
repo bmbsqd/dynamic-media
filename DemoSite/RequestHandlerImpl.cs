@@ -35,7 +35,8 @@ namespace DemoSite
                 new CssLessMediaTransformerFactory(),
                 new CombineCssMediaTransformerFactory(),
                 new EmbedAsBase64CssMediaTransformerFactory(), 
-                new MinifyingMediaTransformerFactory(),
+                new CssMinifyingMediaTransformerFactory(),
+                new JavascriptMinifyingMediaTransformerFactory(), 
                 new MarkdownMediaTransformerFactory()
             });
 

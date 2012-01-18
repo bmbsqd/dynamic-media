@@ -1,28 +1,69 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Implementations;
 
 namespace Bombsquad.DynamicMedia.CombineCss
 {
-    public class CombineCssMediaTransformerFactory : IMediaTransformerFactory
+    public class CombineCssMediaTransformerFactory : TransformerFactoryTextBase
     {
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        protected override bool IsValidFilePath(string absolutePath)
         {
-            if (!request.Url.AbsolutePath.Contains(".combine."))
+            return absolutePath.Contains(".combine.");
+        }
+
+        protected override bool CanHandleFormat(IFormatInfo format)
+        {
+            return string.Equals(format.ContentType, "text/css", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        protected override string ModifyAbsolutePath(string absolutePath)
+        {
+            return absolutePath.Replace(".combine", "");
+        }
+
+        private static readonly Regex CssImportRegex = new Regex(@"@import\s+url\s*\((?<StylesheetUrl>.*)\);", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        protected override MediaTransformResult TransformText(string text, out string transformedText)
+        {
+            var result = MediaTransformResult.Success;
+            transformedText = CssImportRegex.Replace(text, delegate(Match m)
             {
-                mediaTransformer = null;
+                var stylesheetUrl = m.Groups["StylesheetUrl"].Value.Trim(new[] { '\'', '"' });
+                string downloadedContent;
+                if (TryGetStylesheetContent(new Uri(HttpContext.Current.Request.Url, stylesheetUrl), out downloadedContent))
+                {
+                    return downloadedContent;
+                }
+
+                result = MediaTransformResult.FailedWithFallback;
+                return m.Value;
+            });
+            return result;
+        }
+
+        private bool TryGetStylesheetContent(Uri url, out string content)
+        {
+            try
+            {
+                var request = WebRequest.Create(url);
+                using (var response = request.GetResponse())
+                {
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        content = reader.ReadToEnd();
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                content = null;
                 return false;
             }
-
-            if (!string.Equals(originalFormat.ContentType, "text/css", StringComparison.InvariantCultureIgnoreCase))
-            {
-                mediaTransformer = null;
-                return false;
-            }
-
-            Func<string, string> modifyAbsolutePathFunc = (absolutePath => absolutePath.Replace(".combine", ""));
-            mediaTransformer = new CombineCssMediaTransformer(request.Url, originalFormat, modifyAbsolutePathFunc);
-            return true;
         }
     }
 }

@@ -1,14 +1,22 @@
 using System;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Implementations;
+using Microsoft.Ajax.Utilities;
 
-namespace Bombsquad.DynamicMedia.Less
+namespace Bombsquad.DynamicMedia.Minify
 {
-    public class CssLessMediaTransformerFactory : TransformerFactoryTextBase
+    public class CssMinifyingMediaTransformerFactory : TransformerFactoryTextBase
     {
+        private readonly Minifier _minifier;
+
+        public CssMinifyingMediaTransformerFactory()
+        {
+            _minifier = new Minifier();
+        }
+
         protected override bool IsValidFilePath(string absolutePath)
         {
-            return absolutePath.Contains(".less");
+            return absolutePath.Contains(".min.");
         }
 
         protected override bool CanHandleFormat(IFormatInfo format)
@@ -18,13 +26,13 @@ namespace Bombsquad.DynamicMedia.Less
 
         protected override MediaTransformResult TransformText(string text, out string transformedText)
         {
-            transformedText = dotless.Core.Less.Parse(text);
+            transformedText = _minifier.MinifyStyleSheet(text);
             return MediaTransformResult.Success;
         }
 
         protected override string ModifyAbsolutePath(string absolutePath)
         {
-            return absolutePath.Replace(".css", "");
+            return absolutePath.Replace(".min", "");
         }
     }
 }

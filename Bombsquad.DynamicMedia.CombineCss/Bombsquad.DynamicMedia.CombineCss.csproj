@@ -41,9 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CombineCssMediaTransformer.cs" />
     <Compile Include="CombineCssMediaTransformerFactory.cs" />
-    <Compile Include="EmbedAsBase64CssMediaTransformer.cs" />
     <Compile Include="EmbedAsBase64CssMediaTransformerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

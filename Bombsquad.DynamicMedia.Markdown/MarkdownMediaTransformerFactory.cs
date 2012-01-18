@@ -1,32 +1,37 @@
 using System;
-using System.IO;
-using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
-using System.Linq;
+using Bombsquad.DynamicMedia.Implementations;
 
 namespace Bombsquad.DynamicMedia.Markdown
 {
-    public class MarkdownMediaTransformerFactory : IMediaTransformerFactory
+    public class MarkdownMediaTransformerFactory : TransformerFactoryTextBase
     {
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        private readonly MarkdownSharp.Markdown _markdown;
+
+        public MarkdownMediaTransformerFactory()
         {
-            if (!string.Equals(originalFormat.ContentType, "text/html", StringComparison.InvariantCultureIgnoreCase))
-            {
-                mediaTransformer = null;
-                return false;
-            }
+            _markdown = new MarkdownSharp.Markdown();
+        }
 
-            var path = request.Url.AbsolutePath;
-            if (!path.Contains(".md.") && !path.Contains(".markdown.") )
-            {
-                mediaTransformer = null;
-                return false;
-            }
-            
-            Func<string,string> modifyAbsolutePathFunc = (absolutePath => absolutePath.Replace(".html", ""));
+        protected override MediaTransformResult TransformText(string text, out string transformedText)
+        {
+            transformedText = _markdown.Transform(text);
+            return MediaTransformResult.Success;
+        }
 
-            mediaTransformer = new MarkdownMediaTransformer(modifyAbsolutePathFunc, originalFormat);
-            return true;
+        protected override string ModifyAbsolutePath(string absolutePath)
+        {
+            return absolutePath.Replace(".html", "");
+        }
+
+        protected override bool IsValidFilePath(string absolutePath)
+        {
+            return absolutePath.Contains(".md.") || absolutePath.Contains(".markdown.");
+        }
+
+        protected override bool CanHandleFormat(IFormatInfo format)
+        {
+            return string.Equals(format.ContentType, "text/html", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
