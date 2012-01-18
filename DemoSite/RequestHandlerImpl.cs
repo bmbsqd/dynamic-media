@@ -30,7 +30,8 @@ namespace DemoSite
             _storageBackend = new FileSystemStorageBackend(storageRoot);
             _mediaTransformerFactory = new CompositeMediaTransformerFactory(new IMediaTransformerFactory[]
             {
-                new ImageInfoMediaTransformerFactory(),
+                new XmlExifImageInfoMediaTransformer(), 
+                new JsonExifImageInfoMediaTransformer(), 
                 new ImageMediaTransformerFactory(),
                 new CssLessMediaTransformerFactory(),
                 new CombineCssMediaTransformerFactory(),

@@ -48,9 +48,10 @@
     <Compile Include="BitmapTransforms\MirrorBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\RotateBitmapTransformFactory.cs" />
     <Compile Include="BitmapTransforms\ScaleBitmapTransformFactory.cs" />
+    <Compile Include="ExifImageInfoMediaTransformerBase.cs" />
     <Compile Include="IBitmapTransformFactory.cs" />
-    <Compile Include="ImageInfoMediaTransformer.cs" />
-    <Compile Include="ImageInfoMediaTransformerFactory.cs" />
+    <Compile Include="JsonExifImageInfoMediaTransformer.cs" />
+    <Compile Include="XmlExifImageInfoMediaTransformer.cs" />
     <Compile Include="ImageMediaTransformer.cs" />
     <Compile Include="ImageMediaTransformerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

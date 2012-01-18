@@ -20,7 +20,14 @@ namespace Bombsquad.DynamicMedia.Implementations
                 return false;
             }
 
-            mediaTransformer = new MediaTransformer(originalFormat, this);
+            IFormatInfo outputFormat;
+            if( !TryGetOutputFormat(request, originalFormat, out outputFormat) )
+            {
+                mediaTransformer = null;
+                return false;
+            }
+
+            mediaTransformer = new MediaTransformer(outputFormat, this);
             return true;
         }
 
@@ -30,6 +37,11 @@ namespace Bombsquad.DynamicMedia.Implementations
         protected virtual string ModifyAbsolutePath(string absolutePath)
         {
             return absolutePath;
+        }
+        protected virtual bool TryGetOutputFormat(HttpRequestBase request, IFormatInfo originalFormat, out IFormatInfo outputFormat)
+        {
+            outputFormat = originalFormat;
+            return true;
         }
       
         private class MediaTransformer : IMediaTransformer
