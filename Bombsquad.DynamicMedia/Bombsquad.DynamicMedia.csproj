@@ -36,25 +36,34 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\Cache\IAddToCacheResult.cs" />
+    <Compile Include="Implementations\ResultHandlers\CompositeResultHandler.cs" />
     <Compile Include="Configuration\FormatInfoResolverConfiguration.cs" />
-    <Compile Include="Contracts\IFormatInfo.cs" />
-    <Compile Include="Contracts\IFormatInfoResolver.cs" />
-    <Compile Include="Implementations\CompositeMediaTransformer.cs" />
-    <Compile Include="Implementations\FileSystemBasedMediaCache.cs" />
-    <Compile Include="Implementations\FormatInfoResolver.cs" />
-    <Compile Include="Implementations\NullMediaCache.cs" />
-    <Compile Include="Implementations\FormatInfo.cs" />
-    <Compile Include="Contracts\IMediaCache.cs" />
-    <Compile Include="Contracts\IStorageBackend.cs" />
-    <Compile Include="Contracts\IMediaTransformer.cs" />
-    <Compile Include="Contracts\IMediaTransformerFactory.cs" />
-    <Compile Include="Implementations\TransformerFactoryBase.cs" />
-    <Compile Include="Implementations\TransformerFactoryTextBase.cs" />
+    <Compile Include="Contracts\FormatInfo\IFormatInfo.cs" />
+    <Compile Include="Contracts\FormatInfo\IFormatInfoResolver.cs" />
+    <Compile Include="Contracts\Storage\IOriginal.cs" />
+    <Compile Include="Implementations\ResultHandlers\DefaultResultHandler.cs" />
+    <Compile Include="Implementations\Results\CopyToOutputStreamResult.cs" />
+    <Compile Include="Implementations\Transformation\CompositeMediaTransformer.cs" />
+    <Compile Include="Implementations\Cache\FileSystemBasedMediaCache.cs" />
+    <Compile Include="Implementations\FormatInfo\FormatInfoResolver.cs" />
+    <Compile Include="Implementations\Cache\NullMediaCache.cs" />
+    <Compile Include="Implementations\FormatInfo\FormatInfo.cs" />
+    <Compile Include="Contracts\Cache\IMediaCache.cs" />
+    <Compile Include="Contracts\Storage\IStorageBackend.cs" />
+    <Compile Include="Contracts\Transformation\IMediaTransformer.cs" />
+    <Compile Include="Contracts\Transformation\IMediaTransformerFactory.cs" />
+    <Compile Include="Implementations\Transformation\TransformerFactoryBase.cs" />
+    <Compile Include="Implementations\Transformation\TransformerFactoryTextBase.cs" />
+    <Compile Include="Contracts\IResult.cs" />
+    <Compile Include="Contracts\IResultHandler.cs" />
+    <Compile Include="Implementations\ResultHandlers\NotModifiedResultHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestHandler.cs" />
-    <Compile Include="Implementations\CompositeMediaTransformerFactory.cs" />
-    <Compile Include="Implementations\FileSystemMediaCache.cs" />
-    <Compile Include="Implementations\FileSystemStorageBackend.cs" />
+    <Compile Include="DynamicMediaHandlerBase.cs" />
+    <Compile Include="Implementations\Transformation\CompositeMediaTransformerFactory.cs" />
+    <Compile Include="Implementations\Cache\FileSystemMediaCache.cs" />
+    <Compile Include="Implementations\Storage\FileSystemStorageBackend.cs" />
+    <Compile Include="Implementations\Results\TransmitFileResult.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

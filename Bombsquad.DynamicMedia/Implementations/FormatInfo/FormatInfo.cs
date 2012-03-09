@@ -1,6 +1,6 @@
-using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.FormatInfo
 {
     public class FormatInfo : IFormatInfo
     {

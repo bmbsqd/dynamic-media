@@ -5,7 +5,9 @@ using System.Runtime.Serialization.Json;
 using System.Web;
 using System.Xml;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 using Bombsquad.DynamicMedia.Implementations;
+using Bombsquad.DynamicMedia.Implementations.FormatInfo;
 using Bombsquad.Exif.Models;
 
 namespace Bombsquad.DynamicMedia.Imaging

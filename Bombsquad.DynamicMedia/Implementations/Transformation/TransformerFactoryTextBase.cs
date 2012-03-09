@@ -1,8 +1,8 @@
 using System.IO;
 using System.Web;
-using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.Transformation
 {
     public abstract class TransformerFactoryTextBase : TransformerFactoryBase
     {

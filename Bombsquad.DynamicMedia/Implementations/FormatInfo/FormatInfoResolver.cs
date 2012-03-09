@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Configuration;
-using Bombsquad.DynamicMedia.Contracts;
 using System.Linq;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.FormatInfo
 {
     public class FormatInfoResolver : IFormatInfoResolver
     {

@@ -5,8 +5,11 @@ using System.Linq;
 using System.Web;
 using System.Windows.Media.Imaging;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 using Bombsquad.DynamicMedia.Imaging.BitmapTransforms;
 using Bombsquad.DynamicMedia.Implementations;
+using Bombsquad.DynamicMedia.Implementations.FormatInfo;
 
 namespace Bombsquad.DynamicMedia.Imaging
 {

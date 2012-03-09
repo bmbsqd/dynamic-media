@@ -5,7 +5,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 using Bombsquad.DynamicMedia.Implementations;
+using Bombsquad.DynamicMedia.Implementations.Transformation;
 
 namespace Bombsquad.DynamicMedia.CombineCss
 {

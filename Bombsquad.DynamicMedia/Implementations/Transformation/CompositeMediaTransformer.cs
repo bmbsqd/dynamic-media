@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.Transformation
 {
     internal class CompositeMediaTransformer : IMediaTransformer
     {

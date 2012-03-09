@@ -1,4 +1,4 @@
-namespace Bombsquad.DynamicMedia.Contracts
+namespace Bombsquad.DynamicMedia.Contracts.FormatInfo
 {
     public interface IFormatInfo
     {

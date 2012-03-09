@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace Bombsquad.DynamicMedia.Contracts
+namespace Bombsquad.DynamicMedia.Contracts.FormatInfo
 {
     public interface IFormatInfoResolver
     {

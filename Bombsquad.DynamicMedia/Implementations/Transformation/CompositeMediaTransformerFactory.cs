@@ -1,16 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Web;
-using Bombsquad.DynamicMedia.Contracts;
 using System.Linq;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.Transformation
 {
     public class CompositeMediaTransformerFactory : IMediaTransformerFactory
     {
         private readonly IEnumerable<IMediaTransformerFactory> _transformerFactories;
 
-        public CompositeMediaTransformerFactory(IEnumerable<IMediaTransformerFactory> transformerFactories)
+        public CompositeMediaTransformerFactory(params IMediaTransformerFactory[] transformerFactories)
         {
             _transformerFactories = transformerFactories;
         }

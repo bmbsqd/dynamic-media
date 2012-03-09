@@ -4,14 +4,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
-namespace Bombsquad.DynamicMedia.Implementations
+namespace Bombsquad.DynamicMedia.Implementations.Cache
 {
     public class FileSystemMediaCache : FileSystemBasedMediaCache
     {
         private readonly DirectoryInfo _cacheRoot;
 
-        public FileSystemMediaCache(DirectoryInfo cacheRoot)
+        public FileSystemMediaCache(DirectoryInfo cacheRoot, bool cacheOriginals) 
+            : base(cacheOriginals)
         {
             _cacheRoot = cacheRoot;
         }

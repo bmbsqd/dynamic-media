@@ -3,7 +3,10 @@ using System.IO;
 using System.Web;
 using System.Windows.Media.Imaging;
 using Bombsquad.DynamicMedia.Contracts;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
+using Bombsquad.DynamicMedia.Contracts.Transformation;
 using Bombsquad.DynamicMedia.Implementations;
+using Bombsquad.DynamicMedia.Implementations.Transformation;
 using Bombsquad.Exif;
 using Bombsquad.Exif.Models;
 

@@ -1,7 +1,8 @@
 using System.IO;
 using System.Web;
+using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
-namespace Bombsquad.DynamicMedia.Contracts
+namespace Bombsquad.DynamicMedia.Contracts.Transformation
 {
     public interface IMediaTransformer
     {
