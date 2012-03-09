@@ -8,10 +8,15 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
     {
         public bool HandleResult(IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response)
         {
-            response.ContentType = outputFormat.ContentType;
-            response.Cache.SetLastModified(result.LastModified);
-            result.Serve(response);
+            SetupDefaultHeaders( result, outputFormat, response );
+        	result.Serve(response);
             return true;
         }
+
+		public static void SetupDefaultHeaders( IResult result, IFormatInfo outputFormat, HttpResponseBase response )
+		{
+			response.ContentType = outputFormat.ContentType;
+			NotModifiedResultHandler.SetCacheHeaders( result, response );
+		}
     }
 }

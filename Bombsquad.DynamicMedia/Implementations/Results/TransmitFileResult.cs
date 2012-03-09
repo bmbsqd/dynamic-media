@@ -6,13 +6,17 @@ namespace Bombsquad.DynamicMedia.Implementations.Results
 {
     internal class TransmitFileResult : IResult
     {
-        public TransmitFileResult(DateTime lastModified, string fileName)
+        public TransmitFileResult(DateTime? lastModified, string etag, long contentLength, string fileName)
         {
             LastModified = lastModified;
-            FileName = fileName;
+        	ETag = etag;
+        	ContentLength = contentLength;
+        	FileName = fileName;
         }
 
-        public DateTime LastModified { get; private set; }
+    	public DateTime? LastModified { get; private set; }
+    	public string ETag { get; private set; }
+		public long ContentLength { get; private set; }
         public string FileName { get; private set; }
 
         public void Serve(HttpResponseBase response)

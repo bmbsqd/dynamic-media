@@ -8,6 +8,5 @@ namespace Bombsquad.DynamicMedia.Contracts.Cache
     {
         bool TryServeRequestFromCache(HttpRequestBase request, IFormatInfo outputFormat, out IResult result);
         bool TryAddToCache(HttpRequestBase request, Stream stream, IFormatInfo outputFormat, out IAddToCacheResult result);
-        bool CacheOriginals { get; }
     }
 }

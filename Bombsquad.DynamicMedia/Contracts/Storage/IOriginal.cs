@@ -7,5 +7,6 @@ namespace Bombsquad.DynamicMedia.Contracts.Storage
     {
         Stream Stream { get; }
         DateTime LastModified { get; }
+    	string ETag { get; }
     }
 }

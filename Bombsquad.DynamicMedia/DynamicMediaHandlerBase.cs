@@ -48,7 +48,7 @@ namespace Bombsquad.DynamicMedia
                 return true;
             }
 
-            if (!transformMedia && !MediaCache.CacheOriginals)
+            if (!transformMedia && !CacheOriginals)
             {
                 return StorageBackend.TryServeOriginal(request, out result);
             }
@@ -69,17 +69,19 @@ namespace Bombsquad.DynamicMedia
             return true;
         }
 
-        private IResult ServeOriginal(HttpRequestBase request, IOriginal original, IFormatInfo outputFormat)
+    	protected abstract bool CacheOriginals { get; }
+
+    	private IResult ServeOriginal(HttpRequestBase request, IOriginal original, IFormatInfo outputFormat)
         {
             original.Stream.Seek(0, SeekOrigin.Begin);
 
             IAddToCacheResult cacheResult;
             if (MediaCache.TryAddToCache(request, original.Stream, outputFormat, out cacheResult))
             {
-                return new CopyToOutputStreamResult(cacheResult.LastModified, original.Stream);
+                return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, original.Stream.Length, original.Stream);
             }
 
-            return new CopyToOutputStreamResult(original.LastModified, original.Stream);
+            return new CopyToOutputStreamResult(original.LastModified, original.ETag, original.Stream.Length, original.Stream);
         }
 
         private IResult TransformMedia(Stream original, IFormatInfo outputFormat, HttpRequestBase request, IMediaTransformer mediaTransformer)
@@ -93,11 +95,11 @@ namespace Bombsquad.DynamicMedia
                 IAddToCacheResult cacheResult;
                 if(MediaCache.TryAddToCache(request, stream, outputFormat, out cacheResult))
                 {
-                    return new CopyToOutputStreamResult(cacheResult.LastModified, stream);
+                    return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, stream.Length, stream);
                 }
             }
 
-            return new CopyToOutputStreamResult(DateTime.Now, stream);
+            return new CopyToOutputStreamResult(DateTime.Now, null, stream.Length, stream);
         }
 
         protected abstract IMediaCache MediaCache { get; }

@@ -3,19 +3,22 @@ using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.Cache;
+using Bombsquad.DynamicMedia.Contracts.ETag;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 using Bombsquad.DynamicMedia.Implementations.Results;
 
 namespace Bombsquad.DynamicMedia.Implementations.Cache
 {
-    public abstract class FileSystemBasedMediaCache : IMediaCache
+	public abstract class FileSystemBasedMediaCache : IMediaCache
     {
-        protected FileSystemBasedMediaCache(bool cacheOriginals)
-        {
-            CacheOriginals = cacheOriginals;
-        }
+    	private readonly IFileInfoETagCalculator m_fileInfoETagCalculator;
 
-        public bool TryServeRequestFromCache(HttpRequestBase request, IFormatInfo outputFormat, out IResult result)
+    	protected FileSystemBasedMediaCache( IFileInfoETagCalculator fileInfoETagCalculator )
+		{
+			m_fileInfoETagCalculator = fileInfoETagCalculator;
+		}
+
+    	public bool TryServeRequestFromCache(HttpRequestBase request, IFormatInfo outputFormat, out IResult result)
         {
             var cacheFile = GetCacheFileInfo(request, outputFormat);
 
@@ -25,7 +28,8 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
                 return false;
             }
 
-            result = new TransmitFileResult(cacheFile.LastWriteTime, cacheFile.FullName);
+    		var etag = m_fileInfoETagCalculator.CalculateETag( cacheFile );
+            result = new TransmitFileResult(cacheFile.LastWriteTime, etag, cacheFile.Length, cacheFile.FullName);
             return true;
         }
 
@@ -43,22 +47,23 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
                 stream.CopyTo(fileStream);
             }
 
-            result = new AddToCacheResult(DateTime.Now);
+        	var etag = m_fileInfoETagCalculator.CalculateETag( cacheFile );
+            result = new AddToCacheResult(cacheFile.LastWriteTime, etag);
             return true;
         }
 
-        public bool CacheOriginals { get; private set; }
-
-        protected abstract FileInfo GetCacheFileInfo(HttpRequestBase request, IFormatInfo outputFormat);
+		protected abstract FileInfo GetCacheFileInfo(HttpRequestBase request, IFormatInfo outputFormat);
 
         public class AddToCacheResult : IAddToCacheResult
         {
-            public AddToCacheResult(DateTime lastModified)
+            public AddToCacheResult(DateTime lastModified, string etag)
             {
-                LastModified = lastModified;
+            	LastModified = lastModified;
+            	ETag = etag;
             }
 
-            public DateTime LastModified { get; private set; }
+        	public DateTime LastModified { get; private set; }
+        	public string ETag { get; private set; }
         }
     }
 }

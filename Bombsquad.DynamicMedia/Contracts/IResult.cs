@@ -5,8 +5,11 @@ namespace Bombsquad.DynamicMedia.Contracts
 {
     public interface IResult : IDisposable
     {
-        DateTime LastModified { get; }
-        void Serve(HttpResponseBase response);
+    	long ContentLength { get; }
+        DateTime? LastModified { get; }
+    	string ETag { get; }
+
+    	void Serve(HttpResponseBase response);
         void Serve(HttpResponseBase response, long offset, long length);
     }
 }

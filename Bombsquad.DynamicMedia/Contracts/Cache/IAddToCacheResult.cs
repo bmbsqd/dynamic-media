@@ -5,5 +5,6 @@ namespace Bombsquad.DynamicMedia.Contracts.Cache
     public interface IAddToCacheResult
     {
         DateTime LastModified { get; }
+    	string ETag { get; }
     }
 }

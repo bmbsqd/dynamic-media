@@ -37,13 +37,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\Cache\IAddToCacheResult.cs" />
+    <Compile Include="Contracts\ETag\IFileInfoETagCalculator.cs" />
+    <Compile Include="Implementations\ETag\WeakFileInfoETagCalculator.cs" />
     <Compile Include="Implementations\ResultHandlers\CompositeResultHandler.cs" />
     <Compile Include="Configuration\FormatInfoResolverConfiguration.cs" />
     <Compile Include="Contracts\FormatInfo\IFormatInfo.cs" />
     <Compile Include="Contracts\FormatInfo\IFormatInfoResolver.cs" />
     <Compile Include="Contracts\Storage\IOriginal.cs" />
     <Compile Include="Implementations\ResultHandlers\DefaultResultHandler.cs" />
+    <Compile Include="Implementations\ResultHandlers\BytesRangeResultHandler.cs" />
     <Compile Include="Implementations\Results\CopyToOutputStreamResult.cs" />
+    <Compile Include="Implementations\ETag\NullFileInfoETagCalculator.cs" />
+    <Compile Include="Util\StreamExtensions.cs" />
     <Compile Include="Implementations\Transformation\CompositeMediaTransformer.cs" />
     <Compile Include="Implementations\Cache\FileSystemBasedMediaCache.cs" />
     <Compile Include="Implementations\FormatInfo\FormatInfoResolver.cs" />

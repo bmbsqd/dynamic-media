@@ -19,10 +19,5 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             result = null;
             return false;
         }
-
-        public bool CacheOriginals
-        {
-            get { return false; }
-        }
     }
 }
