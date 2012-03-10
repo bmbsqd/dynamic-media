@@ -4,12 +4,12 @@ using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
 namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 {
-    public class DefaultResultHandler : IResultHandler
+    public class SetContentTypeHeaderResultHandler : IResultHandler
     {
         public bool HandleResult(IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response)
         {
-        	result.Serve(response);
-            return true;
+            response.ContentType = outputFormat.ContentType;
+            return false;
         }
     }
 }

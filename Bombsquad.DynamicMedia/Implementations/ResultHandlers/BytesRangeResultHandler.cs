@@ -16,6 +16,11 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 				return false;
 			}
 
+            if (!ValidateIfRangeHeader(request, result))
+            {
+                return false;
+            }
+
 			var offset = range.Start ?? 0;
 			var end = range.End.HasValue ? range.End.Value : result.ContentLength - 1;
 			var length = end - offset + 1;
@@ -24,13 +29,11 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 			response.AddHeader( "Content-Range", "bytes " + offset + "-" + end + "/" + result.ContentLength );
 			response.StatusCode = 206;
 
-			DefaultResultHandler.SetupDefaultHeaders( result, outputFormat, response );
-
 			result.Serve( response, offset, length );
 			return true;
 		}
 
-		private bool TryGetRequestedRange( HttpRequestBase request, out Range range )
+	    private bool TryGetRequestedRange( HttpRequestBase request, out Range range )
 		{
 			var rangeHeader = request.Headers[ "Range" ];
 			if ( string.IsNullOrEmpty( rangeHeader ) )
@@ -61,7 +64,18 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 			return true;
 		}
 
-		private class Range
+	    private bool ValidateIfRangeHeader(HttpRequestBase request, IResult result)
+	    {
+	        var ifRangeHeader = request.Headers["If-Range"];
+	        if(string.IsNullOrEmpty(ifRangeHeader))
+	        {
+	            return true;
+	        }
+
+	        return string.Equals(ifRangeHeader, result.ETag);
+	    }
+
+	    private class Range
 		{
 			public long? Start { get; set; }
 			public long? End { get; set; }

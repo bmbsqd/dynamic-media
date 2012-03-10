@@ -6,12 +6,25 @@ using Bombsquad.DynamicMedia.Contracts.Cache;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 using Bombsquad.DynamicMedia.Contracts.Storage;
 using Bombsquad.DynamicMedia.Contracts.Transformation;
+using Bombsquad.DynamicMedia.Implementations.ResultHandlers;
 using Bombsquad.DynamicMedia.Implementations.Results;
 
 namespace Bombsquad.DynamicMedia
 {
     public abstract class DynamicMediaHandlerBase : IHttpHandler
     {
+        private IResultHandler _defaultResultHandler;
+
+        protected DynamicMediaHandlerBase()
+        {
+            _defaultResultHandler = new CompositeResultHandler(
+                new SetCacheHeadersResultHandler(), 
+                new NotModifiedResultHandler(),
+                new SetContentTypeHeaderResultHandler(),
+                new BytesRangeResultHandler(),
+                new DefaultResultHandler());
+        }
+
         public void ProcessRequest(HttpContext context)
         {
             var request = new HttpRequestWrapper(context.Request);
@@ -106,7 +119,7 @@ namespace Bombsquad.DynamicMedia
         protected abstract IStorageBackend StorageBackend { get; }
         protected abstract IMediaTransformerFactory MediaTransformerFactory { get; }
         protected abstract IFormatInfoResolver FormatInfoResolver { get; }
-        protected abstract IResultHandler ResultHandler { get; }
+        protected virtual IResultHandler ResultHandler { get { return _defaultResultHandler; } }
 
         protected virtual void ServeNotFoundResult(HttpResponseBase response)
         {

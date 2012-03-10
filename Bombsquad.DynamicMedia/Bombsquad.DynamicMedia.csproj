@@ -46,6 +46,8 @@
     <Compile Include="Contracts\Storage\IOriginal.cs" />
     <Compile Include="Implementations\ResultHandlers\DefaultResultHandler.cs" />
     <Compile Include="Implementations\ResultHandlers\BytesRangeResultHandler.cs" />
+    <Compile Include="Implementations\ResultHandlers\SetCacheHeadersResultHandler.cs" />
+    <Compile Include="Implementations\ResultHandlers\SetContentTypeHeaderResultHandler.cs" />
     <Compile Include="Implementations\Results\CopyToOutputStreamResult.cs" />
     <Compile Include="Implementations\ETag\NullFileInfoETagCalculator.cs" />
     <Compile Include="Util\StreamExtensions.cs" />
