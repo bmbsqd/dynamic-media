@@ -33,7 +33,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return true;
         }
 
-        public bool TryAddToCache(HttpRequestBase request, Stream stream, IFormatInfo outputFormat, out IAddToCacheResult result)
+        public bool TryAddToCache(HttpRequestBase request, Func<Stream> stream, IFormatInfo outputFormat, out IAddToCacheResult result)
         {
             var cacheFile = GetCacheFileInfo(request, outputFormat);
 
@@ -44,7 +44,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
 
             using (var fileStream = cacheFile.Create())
             {
-                stream.CopyTo(fileStream);
+                stream().CopyTo(fileStream);
             }
 
         	var etag = m_fileInfoETagCalculator.CalculateETag( cacheFile );

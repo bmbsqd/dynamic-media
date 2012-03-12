@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
 
@@ -6,6 +7,14 @@ namespace Bombsquad.DynamicMedia.Implementations.Results
 {
     internal class TransmitFileResult : IResult
     {
+    	public TransmitFileResult(FileInfo file, string etag)
+    	{
+			LastModified = file.LastWriteTime;
+			ETag = etag;
+			ContentLength = file.Length;
+			FileName = file.FullName;
+    	}
+
         public TransmitFileResult(DateTime? lastModified, string etag, long contentLength, string fileName)
         {
             LastModified = lastModified;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.Cache;
@@ -13,7 +12,7 @@ namespace Bombsquad.DynamicMedia
 {
     public abstract class DynamicMediaHandlerBase : IHttpHandler
     {
-        private IResultHandler _defaultResultHandler;
+        private readonly IResultHandler _defaultResultHandler;
 
         protected DynamicMediaHandlerBase()
         {
@@ -61,40 +60,39 @@ namespace Bombsquad.DynamicMedia
                 return true;
             }
 
+			IStorageFile storageFile;
+			if(!StorageBackend.TryGetStorageFile( request, mediaTransformer, out storageFile ))
+			{
+				return false;
+			}
+
             if (!transformMedia && !CacheOriginals)
             {
-                return StorageBackend.TryServeOriginal(request, out result);
+            	result = storageFile;
+            	return true;
             }
-
-            IOriginal original;
-            if (!StorageBackend.TryGetOriginalStream(request, mediaTransformer, out original))
-            {
-                return false;
-            }
-
+            
             if (transformMedia)
             {
-                result = TransformMedia(original.Stream, outputFormat, request, mediaTransformer);
+                result = TransformMedia(storageFile.GetStream(), outputFormat, request, mediaTransformer);
                 return true;
             }
             
-            result = ServeOriginal(request, original, outputFormat);
+            result = ServeOriginal(request, storageFile, outputFormat);
             return true;
         }
 
     	protected abstract bool CacheOriginals { get; }
 
-    	private IResult ServeOriginal(HttpRequestBase request, IOriginal original, IFormatInfo outputFormat)
-        {
-            original.Stream.Seek(0, SeekOrigin.Begin);
-
+    	private IResult ServeOriginal(HttpRequestBase request, IStorageFile storageFile, IFormatInfo outputFormat)
+    	{
             IAddToCacheResult cacheResult;
-            if (MediaCache.TryAddToCache(request, original.Stream, outputFormat, out cacheResult))
+			if( MediaCache.TryAddToCache( request, storageFile.GetStream, outputFormat, out cacheResult ) )
             {
-                return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, original.Stream.Length, original.Stream);
+				return new CopyToOutputStreamResult( cacheResult.LastModified, cacheResult.ETag, storageFile.ContentLength, storageFile.GetStream());
             }
 
-            return new CopyToOutputStreamResult(original.LastModified, original.ETag, original.Stream.Length, original.Stream);
+            return storageFile;
         }
 
         private IResult TransformMedia(Stream original, IFormatInfo outputFormat, HttpRequestBase request, IMediaTransformer mediaTransformer)
@@ -106,13 +104,13 @@ namespace Bombsquad.DynamicMedia
             if (transformResult == MediaTransformResult.Success)
             {
                 IAddToCacheResult cacheResult;
-                if(MediaCache.TryAddToCache(request, stream, outputFormat, out cacheResult))
+                if(MediaCache.TryAddToCache(request, () => stream, outputFormat, out cacheResult))
                 {
                     return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, stream.Length, stream);
                 }
             }
 
-            return new CopyToOutputStreamResult(DateTime.Now, null, stream.Length, stream);
+            return new CopyToOutputStreamResult(null, null, stream.Length, stream);
         }
 
         protected abstract IMediaCache MediaCache { get; }

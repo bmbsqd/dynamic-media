@@ -5,7 +5,6 @@ namespace Bombsquad.DynamicMedia.Contracts.Storage
 {
     public interface IStorageBackend
     {
-        bool TryGetOriginalStream(HttpRequestBase request, IMediaTransformer mediaTransformer, out IOriginal output);
-        bool TryServeOriginal(HttpRequestBase request, out IResult result);
+        bool TryGetStorageFile(HttpRequestBase request, IMediaTransformer mediaTransformer, out IStorageFile storageFile);
     }
 }

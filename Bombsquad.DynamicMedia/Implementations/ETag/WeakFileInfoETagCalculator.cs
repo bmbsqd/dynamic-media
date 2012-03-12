@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Bombsquad.DynamicMedia.Contracts.ETag;
 using System.Linq;
+using Bombsquad.DynamicMedia.Util;
 
 namespace Bombsquad.DynamicMedia.Implementations.ETag
 {
@@ -28,7 +29,7 @@ namespace Bombsquad.DynamicMedia.Implementations.ETag
 			material.AppendLine( file.Length.ToString() );
 
 			var hash = m_hash.ComputeHash( Encoding.UTF8.GetBytes( material.ToString() ) );
-			return new string( hash.SelectMany( b => b.ToString("x2").ToLower() ).ToArray() );
+			return ETagUtil.CreateWeakETag( new string( hash.SelectMany( b => b.ToString("x2").ToLower() ).ToArray() ) );
 		}
 	}
 }

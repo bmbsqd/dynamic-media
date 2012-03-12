@@ -10,12 +10,14 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
         {
             if (result.LastModified.HasValue)
             {
+				response.Cache.SetCacheability( HttpCacheability.ServerAndPrivate );
                 response.Cache.SetLastModified(result.LastModified.Value);
             }
 
             if (!string.IsNullOrEmpty(result.ETag))
             {
-                response.Cache.SetETag("\"" + result.ETag + "\"");
+				response.Cache.SetCacheability( HttpCacheability.ServerAndPrivate );
+				response.Cache.SetETag( result.ETag );
             }
 
             return false;

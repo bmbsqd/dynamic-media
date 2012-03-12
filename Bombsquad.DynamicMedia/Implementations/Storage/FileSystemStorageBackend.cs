@@ -1,7 +1,5 @@
-using System;
 using System.IO;
 using System.Web;
-using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.ETag;
 using Bombsquad.DynamicMedia.Contracts.Storage;
 using Bombsquad.DynamicMedia.Contracts.Transformation;
@@ -20,40 +18,17 @@ namespace Bombsquad.DynamicMedia.Implementations.Storage
         	m_fileInfoETagCalculator = fileInfoETagCalculator;
         }
 
-    	public bool TryGetOriginalStream(HttpRequestBase request, IMediaTransformer mediaTransformer, out IOriginal original)
+    	public bool TryGetStorageFile(HttpRequestBase request, IMediaTransformer mediaTransformer, out IStorageFile storageFile)
         {
             FileInfo sourceImagePath;
             if (!TryFindPhysicalFile(request, mediaTransformer, out sourceImagePath))
             {
-                original = null;
+                storageFile = null;
                 return false;
             }
-
-            var outputStream = new MemoryStream();
-
-            using (var stream = sourceImagePath.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                stream.CopyTo(outputStream);
-            }
-
-            outputStream.Seek(0, SeekOrigin.Begin);
     		
 			var eTag = m_fileInfoETagCalculator.CalculateETag( sourceImagePath );
-    		original = new Original(outputStream, sourceImagePath.LastWriteTime, eTag);
-            return true;
-        }
-
-        public bool TryServeOriginal(HttpRequestBase request, out IResult result)
-        {
-            FileInfo sourceImagePath;
-            if (!TryFindPhysicalFile(request, null, out sourceImagePath))
-            {
-                result = null;
-                return false;
-            }
-
-        	var etag = m_fileInfoETagCalculator.CalculateETag( sourceImagePath );
-            result = new TransmitFileResult(sourceImagePath.LastWriteTime, etag, sourceImagePath.Length, sourceImagePath.FullName);
+			storageFile = new StorageFile( sourceImagePath, eTag );
             return true;
         }
 
@@ -79,18 +54,28 @@ namespace Bombsquad.DynamicMedia.Implementations.Storage
             return absolutePath;
         }
 
-        private class Original : IOriginal
+        private class StorageFile : TransmitFileResult, IStorageFile
         {
-            public Original(Stream stream, DateTime lastModified, string etag)
+        	private readonly FileInfo _file;
+        	private FileStream _stream;
+
+        	public StorageFile(FileInfo file, string etag) 
+				: base(file, etag)
             {
-                Stream = stream;
-                LastModified = lastModified;
-            	ETag = etag;
+            	_file = file;
             }
 
-            public Stream Stream { get; private set; }
-            public DateTime LastModified { get; private set; }
-        	public string ETag { get; private set; }
+        	public Stream GetStream()
+        	{
+				if( _stream == null)
+				{
+					_stream = _file.Open( FileMode.Open, FileAccess.Read, FileShare.Read );
+					return _stream;
+				}
+
+        		_stream.Seek( 0, SeekOrigin.Begin );
+        		return _stream;
+        	}
         }
     }
 }

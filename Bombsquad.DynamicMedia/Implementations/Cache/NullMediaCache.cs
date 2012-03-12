@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
@@ -14,7 +15,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return false;
         }
 
-        public bool TryAddToCache(HttpRequestBase request, Stream stream, IFormatInfo outputFormat, out IAddToCacheResult result)
+        public bool TryAddToCache(HttpRequestBase request, Func<Stream> stream, IFormatInfo outputFormat, out IAddToCacheResult result)
         {
             result = null;
             return false;
