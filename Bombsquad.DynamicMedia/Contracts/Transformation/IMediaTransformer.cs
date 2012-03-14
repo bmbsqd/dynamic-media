@@ -1,12 +1,11 @@
 using System.IO;
-using System.Web;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
 namespace Bombsquad.DynamicMedia.Contracts.Transformation
 {
     public interface IMediaTransformer
     {
-        MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream);
+        MediaTransformResult TransformStream(Stream stream, out Stream transformedStream);
         IFormatInfo OutputFormat { get; }
         string ModifyAbsolutePath(string absolutePath);
     }

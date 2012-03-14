@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Windows.Media.Imaging;
-using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 using Bombsquad.DynamicMedia.Contracts.Transformation;
 
@@ -22,7 +20,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             OutputFormat = formatInfo;
         }
 
-        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
+        public MediaTransformResult TransformStream(Stream stream, out Stream transformedStream)
         {
             var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
             BitmapSource bitmapSource = decoder.Frames[0];

@@ -1,8 +1,6 @@
 using System.IO;
-using System.Web;
 using Bombsquad.DynamicMedia.Contracts.ETag;
 using Bombsquad.DynamicMedia.Contracts.Storage;
-using Bombsquad.DynamicMedia.Contracts.Transformation;
 using Bombsquad.DynamicMedia.Implementations.Results;
 
 namespace Bombsquad.DynamicMedia.Implementations.Storage
@@ -18,10 +16,10 @@ namespace Bombsquad.DynamicMedia.Implementations.Storage
         	m_fileInfoETagCalculator = fileInfoETagCalculator;
         }
 
-    	public bool TryGetStorageFile(HttpRequestBase request, IMediaTransformer mediaTransformer, out IStorageFile storageFile)
+    	public bool TryGetStorageFile(string path, out IStorageFile storageFile)
         {
             FileInfo sourceImagePath;
-            if (!TryFindPhysicalFile(request, mediaTransformer, out sourceImagePath))
+            if (!TryFindPhysicalFile(path, out sourceImagePath))
             {
                 storageFile = null;
                 return false;
@@ -32,26 +30,13 @@ namespace Bombsquad.DynamicMedia.Implementations.Storage
             return true;
         }
 
-        private bool TryFindPhysicalFile(HttpRequestBase request, IMediaTransformer mediaTransformer, out FileInfo sourceImagePath)
+        private bool TryFindPhysicalFile(string path, out FileInfo sourceImagePath)
         {
-            var path = GetAbsolutePath(request);
-
-            if (mediaTransformer != null)
-            {
-                path = mediaTransformer.ModifyAbsolutePath(path);
-            }
+            path = path.Replace('/', '\\');
+            path = path.TrimStart('\\');
 
             sourceImagePath = new FileInfo(Path.Combine(m_storageRoot.FullName, path));
-
             return sourceImagePath.Exists;
-        }
-
-        private static string GetAbsolutePath(HttpRequestBase request)
-        {
-            var absolutePath = request.Url.AbsolutePath;
-            absolutePath = absolutePath.Replace('/', '\\');
-            absolutePath = absolutePath.TrimStart('\\');
-            return absolutePath;
         }
 
         private class StorageFile : TransmitFileResult, IStorageFile

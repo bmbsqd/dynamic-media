@@ -31,7 +31,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             return string.Equals(format.Extension, ".jpg", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        protected override MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
+        protected override MediaTransformResult TransformStream(Stream stream, out Stream transformedStream)
         {
             var bitmap = BitmapFrame.Create(stream);
             var exifData = _exifParser.Parse(bitmap);

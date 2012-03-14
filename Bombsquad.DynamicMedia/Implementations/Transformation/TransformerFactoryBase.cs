@@ -34,7 +34,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
 
         protected abstract bool IsValidFilePath(string absolutePath);
         protected abstract bool CanHandleFormat(IFormatInfo format);
-        protected abstract MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream);
+        protected abstract MediaTransformResult TransformStream(Stream stream, out Stream transformedStream);
         protected virtual string ModifyAbsolutePath(string absolutePath)
         {
             return absolutePath;
@@ -55,9 +55,9 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
                 OutputFormat = outputFormat;
             }
 
-            public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
+            public MediaTransformResult TransformStream(Stream stream, out Stream transformedStream)
             {
-                return _transformerFactory.TransformStream(request, stream, out transformedStream);
+                return _transformerFactory.TransformStream(stream, out transformedStream);
             }
 
             public IFormatInfo OutputFormat { get; private set; }

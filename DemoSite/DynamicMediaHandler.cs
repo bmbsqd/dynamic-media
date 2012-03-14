@@ -30,9 +30,13 @@ namespace DemoSite
 		public DynamicMediaHandler()
 		{
 			var storageRoot = new DirectoryInfo( HttpContext.Current.Server.MapPath( ConfigurationManager.AppSettings[ "StorageRoot" ] ) );
+            var cacheRoot = new  DirectoryInfo( HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["CacheRoot"]));
+            
+            var etagCalculator = new WeakFileInfoETagCalculator();
 
-			m_mediaCache = new NullMediaCache();
-			m_storageBackend = new FileSystemStorageBackend( storageRoot, new WeakFileInfoETagCalculator() );
+			//m_mediaCache = new FileSystemMediaCache(etagCalculator, cacheRoot);
+            m_mediaCache = new NullMediaCache();
+		    m_storageBackend = new FileSystemStorageBackend( storageRoot, etagCalculator );
 			m_mediaTransformerFactory = new CompositeMediaTransformerFactory( new IMediaTransformerFactory[]
 			{
 				new XmlExifImageInfoMediaTransformer(), new JsonExifImageInfoMediaTransformer(),

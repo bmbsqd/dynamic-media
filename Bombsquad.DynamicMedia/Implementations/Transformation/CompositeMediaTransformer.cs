@@ -26,14 +26,14 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
             _transformers.Add(transformer);
         }
 
-        public MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
+        public MediaTransformResult TransformStream(Stream stream, out Stream transformedStream)
         {
             transformedStream = stream;
             var worstResult = MediaTransformResult.Success;
             
             foreach (var transformer in _transformers)
             {
-                var mediaTransformResult = transformer.TransformStream(request, transformedStream, out transformedStream);
+                var mediaTransformResult = transformer.TransformStream(transformedStream, out transformedStream);
                 if(mediaTransformResult > worstResult)
                 {
                     worstResult = mediaTransformResult;

@@ -18,9 +18,9 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
 			m_fileInfoETagCalculator = fileInfoETagCalculator;
 		}
 
-    	public bool TryServeRequestFromCache(HttpRequestBase request, IFormatInfo outputFormat, out IResult result)
+    	public bool TryServeRequestFromCache(string path, IFormatInfo outputFormat, out IResult result)
         {
-            var cacheFile = GetCacheFileInfo(request, outputFormat);
+            var cacheFile = GetCacheFileInfo(path, outputFormat);
 
             if (!cacheFile.Exists)
             {
@@ -33,9 +33,9 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return true;
         }
 
-        public bool TryAddToCache(HttpRequestBase request, Func<Stream> stream, IFormatInfo outputFormat, out IAddToCacheResult result)
+        public bool TryAddToCache(string path, Func<Stream> stream, IFormatInfo outputFormat, out IAddToCacheResult result)
         {
-            var cacheFile = GetCacheFileInfo(request, outputFormat);
+            var cacheFile = GetCacheFileInfo(path, outputFormat);
 
             if (!cacheFile.Directory.Exists)
             {
@@ -52,7 +52,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return true;
         }
 
-		protected abstract FileInfo GetCacheFileInfo(HttpRequestBase request, IFormatInfo outputFormat);
+		protected abstract FileInfo GetCacheFileInfo(string path, IFormatInfo outputFormat);
 
         public class AddToCacheResult : IAddToCacheResult
         {

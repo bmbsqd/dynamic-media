@@ -27,15 +27,9 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return Path.Combine(m_cacheRoot.FullName, relativeUrl);
         }
 
-        private string GetCacheKey(HttpRequestBase request)
+        protected override FileInfo GetCacheFileInfo(string path, IFormatInfo outputFormat)
         {
-            return request.Url.PathAndQuery.ToLower();
-        }
-
-        protected override FileInfo GetCacheFileInfo(HttpRequestBase request, IFormatInfo outputFormat)
-        {
-            var cacheKey = GetCacheKey(request);
-            return new FileInfo(GetCacheFileName(cacheKey, outputFormat));
+            return new FileInfo(GetCacheFileName(path, outputFormat));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
 {
     public abstract class TransformerFactoryTextBase : TransformerFactoryBase
     {
-        protected override MediaTransformResult TransformStream(HttpRequestBase request, Stream stream, out Stream transformedStream)
+        protected override MediaTransformResult TransformStream(Stream stream, out Stream transformedStream)
         {
             string text;
             using (var reader = new StreamReader(stream))

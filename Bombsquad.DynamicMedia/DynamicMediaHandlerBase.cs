@@ -53,15 +53,35 @@ namespace Bombsquad.DynamicMedia
             }
         }
 
+        private static string GetRequestPath(HttpRequestBase request)
+        {
+            return request.Url.AbsolutePath;
+        }
+
+        private static string GetOriginalPath(HttpRequestBase request, IMediaTransformer mediaTransformer)
+        {
+            var path = GetRequestPath(request);
+
+            if (mediaTransformer != null)
+            {
+                path = mediaTransformer.ModifyAbsolutePath(path);
+            }
+
+            return path;
+        }
+
         private bool TryGetResult(HttpRequestBase request, IFormatInfo outputFormat, bool transformMedia, IMediaTransformer mediaTransformer, out IResult result)
         {
-            if (MediaCache.TryServeRequestFromCache(request, outputFormat, out result))
+            var path = GetRequestPath(request) ;
+            var originalPath = GetOriginalPath(request, mediaTransformer);
+
+            if (MediaCache.TryServeRequestFromCache(transformMedia ? path : originalPath, outputFormat, out result))
             {
                 return true;
             }
 
 			IStorageFile storageFile;
-			if(!StorageBackend.TryGetStorageFile( request, mediaTransformer, out storageFile ))
+			if(!StorageBackend.TryGetStorageFile(originalPath , out storageFile ))
 			{
 				return false;
 			}
@@ -74,20 +94,20 @@ namespace Bombsquad.DynamicMedia
             
             if (transformMedia)
             {
-                result = TransformMedia(storageFile.GetStream(), outputFormat, request, mediaTransformer);
+                result = TransformMedia(storageFile.GetStream(), outputFormat, path, mediaTransformer);
                 return true;
             }
             
-            result = ServeOriginal(request, storageFile, outputFormat);
+            result = ServeOriginal(originalPath, storageFile, outputFormat);
             return true;
         }
 
-    	protected abstract bool CacheOriginals { get; }
+        protected abstract bool CacheOriginals { get; }
 
-    	private IResult ServeOriginal(HttpRequestBase request, IStorageFile storageFile, IFormatInfo outputFormat)
+    	private IResult ServeOriginal(string path, IStorageFile storageFile, IFormatInfo outputFormat)
     	{
             IAddToCacheResult cacheResult;
-			if( MediaCache.TryAddToCache( request, storageFile.GetStream, outputFormat, out cacheResult ) )
+			if( MediaCache.TryAddToCache( path, storageFile.GetStream, outputFormat, out cacheResult ) )
             {
 				return new CopyToOutputStreamResult( cacheResult.LastModified, cacheResult.ETag, storageFile.ContentLength, storageFile.GetStream());
             }
@@ -95,16 +115,16 @@ namespace Bombsquad.DynamicMedia
             return storageFile;
         }
 
-        private IResult TransformMedia(Stream original, IFormatInfo outputFormat, HttpRequestBase request, IMediaTransformer mediaTransformer)
+        private IResult TransformMedia(Stream original, IFormatInfo outputFormat, string path, IMediaTransformer mediaTransformer)
         {
             Stream stream;
-            var transformResult = mediaTransformer.TransformStream(request, original, out stream);
+            var transformResult = mediaTransformer.TransformStream(original, out stream);
             original.Dispose();
 
             if (transformResult == MediaTransformResult.Success)
             {
                 IAddToCacheResult cacheResult;
-                if(MediaCache.TryAddToCache(request, () => stream, outputFormat, out cacheResult))
+                if(MediaCache.TryAddToCache(path, () => stream, outputFormat, out cacheResult))
                 {
                     return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, stream.Length, stream);
                 }
