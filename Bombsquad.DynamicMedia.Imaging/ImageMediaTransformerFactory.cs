@@ -21,6 +21,8 @@ namespace Bombsquad.DynamicMedia.Imaging
             AddBitmapTransformFactory(new RotateBitmapTransformFactory());
             AddBitmapTransformFactory(new ScaleBitmapTransformFactory());
             AddBitmapTransformFactory(new MirrorBitmapTransformerFactory());
+            AddBitmapTransformFactory(new WidthBitmapTransformerFactory());
+            AddBitmapTransformFactory(new HeightBitmapTransformerFactory());
             AddBitmapTransformFactory(new MaxWidthBitmapTransformerFactory());
             AddBitmapTransformFactory(new MaxHeightBitmapTransformerFactory());
             AddBitmapTransformFactory(new ColorBitmapTransformerFactory());

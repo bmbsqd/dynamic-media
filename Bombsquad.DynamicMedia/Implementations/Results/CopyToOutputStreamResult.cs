@@ -23,11 +23,13 @@ namespace Bombsquad.DynamicMedia.Implementations.Results
 
 		public void Serve( HttpResponseBase response )
 		{
+		    Stream.Seek(0, SeekOrigin.Begin);
 			Stream.CopyTo( response.OutputStream );
 		}
 
 		public void Serve( HttpResponseBase response, long offset, long length )
 		{
+            Stream.Seek(0, SeekOrigin.Begin);
 			Stream.CopyTo( response.OutputStream, offset, length );
 		}
 

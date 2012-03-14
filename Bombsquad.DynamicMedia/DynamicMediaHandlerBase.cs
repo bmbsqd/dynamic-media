@@ -55,12 +55,12 @@ namespace Bombsquad.DynamicMedia
 
         private static string GetRequestPath(HttpRequestBase request)
         {
-            return request.Url.AbsolutePath;
+            return request.Url.PathAndQuery;
         }
 
         private static string GetOriginalPath(HttpRequestBase request, IMediaTransformer mediaTransformer)
         {
-            var path = GetRequestPath(request);
+            var path = request.Url.AbsolutePath;
 
             if (mediaTransformer != null)
             {

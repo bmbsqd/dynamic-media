@@ -34,8 +34,8 @@ namespace DemoSite
             
             var etagCalculator = new WeakFileInfoETagCalculator();
 
-			//m_mediaCache = new FileSystemMediaCache(etagCalculator, cacheRoot);
-            m_mediaCache = new NullMediaCache();
+			m_mediaCache = new FileSystemMediaCache(etagCalculator, cacheRoot);
+            //m_mediaCache = new NullMediaCache();
 		    m_storageBackend = new FileSystemStorageBackend( storageRoot, etagCalculator );
 			m_mediaTransformerFactory = new CompositeMediaTransformerFactory( new IMediaTransformerFactory[]
 			{

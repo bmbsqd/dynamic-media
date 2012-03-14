@@ -43,11 +43,13 @@
     <Compile Include="BitmapTransforms\AreaBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\ColorBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\CropBitmapTransformerFactory.cs" />
+    <Compile Include="BitmapTransforms\HeightBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\MaxHeightBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\MaxWidthBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\MirrorBitmapTransformerFactory.cs" />
     <Compile Include="BitmapTransforms\RotateBitmapTransformFactory.cs" />
     <Compile Include="BitmapTransforms\ScaleBitmapTransformFactory.cs" />
+    <Compile Include="BitmapTransforms\WidthBitmapTransformerFactory.cs" />
     <Compile Include="ExifImageInfoMediaTransformerBase.cs" />
     <Compile Include="IBitmapTransformFactory.cs" />
     <Compile Include="JsonExifImageInfoMediaTransformer.cs" />
