@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
-using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.ETag;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 

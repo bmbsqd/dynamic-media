@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Linq;
@@ -15,26 +16,26 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
             _transformerFactories = transformerFactories;
         }
 
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, IFormatInfoProvider formatInfoProvider, out IMediaTransformer mediaTransformer)
         {
             var compositeTransformer = new CompositeMediaTransformer();
             var factories = _transformerFactories.ToList();
-            AddTransformerToComposite(request, originalFormat, compositeTransformer, factories);
+            AddTransformerToComposite(request, originalFormat, compositeTransformer, factories, formatInfoProvider);
 
             mediaTransformer = compositeTransformer;
             return compositeTransformer.Count > 0;
         }
 
-        private static void AddTransformerToComposite(HttpRequestBase request, IFormatInfo originalFormat, CompositeMediaTransformer compositeTransformer, List<IMediaTransformerFactory> factories)
+        private static void AddTransformerToComposite(HttpRequestBase request, IFormatInfo originalFormat, CompositeMediaTransformer compositeTransformer, List<IMediaTransformerFactory> factories, IFormatInfoProvider formatInfoProvider)
         {
             foreach (var transformerFactory in factories)
             {
                 IMediaTransformer transformer;
-                if (transformerFactory.TryCreateTransformer(request, originalFormat, out transformer))
+                if (transformerFactory.TryCreateTransformer(request, originalFormat, formatInfoProvider, out transformer))
                 {
                     compositeTransformer.AddMediaTransformer(transformer);
                     factories.Remove(transformerFactory);
-                    AddTransformerToComposite( request, transformer.OutputFormat, compositeTransformer, factories );
+                    AddTransformerToComposite( request, transformer.OutputFormat, compositeTransformer, factories, formatInfoProvider);
                     return;
                 }
             }

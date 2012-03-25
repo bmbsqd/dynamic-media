@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.Cache;
@@ -14,7 +13,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Cache
             return false;
         }
 
-        public bool TryAddToCache(string path, Func<Stream> stream, IFormatInfo outputFormat, out IAddToCacheResult result)
+        public bool TryAddToCache(string path, Stream stream, IFormatInfo outputFormat, out IAddToCacheResult result)
         {
             result = null;
             return false;

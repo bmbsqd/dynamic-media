@@ -10,6 +10,8 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 
 		public bool HandleResult( IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response )
 		{
+            response.AddHeader("Accept-Ranges", "bytes");
+
 			Range range;
 			if ( !TryGetRequestedRange( request, out range ) )
 			{
@@ -25,7 +27,6 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 			var end = range.End.HasValue ? range.End.Value : result.ContentLength - 1;
 			var length = end - offset + 1;
 
-			response.AddHeader( "Accept-Ranges", "bytes" );
 			response.AddHeader( "Content-Range", "bytes " + offset + "-" + end + "/" + result.ContentLength );
 			response.StatusCode = 206;
 

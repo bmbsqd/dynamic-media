@@ -25,27 +25,31 @@ namespace DemoSite
 		private readonly IMediaCache m_mediaCache;
 		private readonly IStorageBackend m_storageBackend;
 		private readonly IMediaTransformerFactory m_mediaTransformerFactory;
-		private readonly FormatInfoResolver m_formatInfoResolver;
+		private readonly FormatInfoProvider _mFormatInfoProvider;
 
 		public DynamicMediaHandler()
 		{
 			var storageRoot = new DirectoryInfo( HttpContext.Current.Server.MapPath( ConfigurationManager.AppSettings[ "StorageRoot" ] ) );
-            var cacheRoot = new  DirectoryInfo( HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["CacheRoot"]));
+            var cacheRoot = new DirectoryInfo( HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["CacheRoot"]));
             
             var etagCalculator = new WeakFileInfoETagCalculator();
 
 			m_mediaCache = new FileSystemMediaCache(etagCalculator, cacheRoot);
             //m_mediaCache = new NullMediaCache();
 		    m_storageBackend = new FileSystemStorageBackend( storageRoot, etagCalculator );
-			m_mediaTransformerFactory = new CompositeMediaTransformerFactory( new IMediaTransformerFactory[]
-			{
-				new XmlExifImageInfoMediaTransformer(), new JsonExifImageInfoMediaTransformer(),
-				new ImageMediaTransformerFactory(), new CssLessMediaTransformerFactory(), new CombineCssMediaTransformerFactory(),
-				new EmbedAsBase64CssMediaTransformerFactory(), new CssMinifyingMediaTransformerFactory(),
-				new JavascriptMinifyingMediaTransformerFactory(), new MarkdownMediaTransformerFactory()
-			} );
+			m_mediaTransformerFactory = new CompositeMediaTransformerFactory(
+				new XmlExifImageInfoMediaTransformer(), 
+                new JsonExifImageInfoMediaTransformer(),
+				new ImageMediaTransformerFactory(), 
+                new CssLessMediaTransformerFactory(), 
+                new CombineCssMediaTransformerFactory(),
+				new EmbedAsBase64CssMediaTransformerFactory(), 
+                new CssMinifyingMediaTransformerFactory(),
+				new JavascriptMinifyingMediaTransformerFactory(), 
+                new MarkdownMediaTransformerFactory()
+			);
 
-			m_formatInfoResolver = new FormatInfoResolver( (FormatInfoResolverConfiguration) ConfigurationManager.GetSection( "dynamicMediaFormatMappings" ) );
+			_mFormatInfoProvider = new FormatInfoProvider( (FormatInfoResolverConfiguration) ConfigurationManager.GetSection( "dynamicMediaFormatMappings" ) );
 		}
 
 		protected override bool CacheOriginals
@@ -68,9 +72,9 @@ namespace DemoSite
 			get { return m_mediaTransformerFactory; }
 		}
 
-		protected override IFormatInfoResolver FormatInfoResolver
+		protected override IFormatInfoProvider FormatInfoProvider
 		{
-			get { return m_formatInfoResolver; }
+			get { return _mFormatInfoProvider; }
 		}
 	}
 }

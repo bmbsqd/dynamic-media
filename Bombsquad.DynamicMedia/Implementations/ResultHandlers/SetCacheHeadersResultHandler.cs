@@ -1,3 +1,4 @@
+using System;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
@@ -8,15 +9,21 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
     {
         public bool HandleResult(IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response)
         {
+            response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
+
+            if (outputFormat.ClientCacheMaxAge.HasValue)
+            {
+                response.Cache.SetExpires(DateTime.Now.Add(outputFormat.ClientCacheMaxAge.Value));
+                response.Cache.SetMaxAge(outputFormat.ClientCacheMaxAge.Value);
+            }
+
             if (result.LastModified.HasValue)
             {
-				response.Cache.SetCacheability( HttpCacheability.ServerAndPrivate );
                 response.Cache.SetLastModified(result.LastModified.Value);
             }
 
             if (!string.IsNullOrEmpty(result.ETag))
             {
-				response.Cache.SetCacheability( HttpCacheability.ServerAndPrivate );
 				response.Cache.SetETag( result.ETag );
             }
 

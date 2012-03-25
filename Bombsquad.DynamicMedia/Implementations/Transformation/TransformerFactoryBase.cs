@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;
@@ -7,7 +8,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
 {
     public abstract class TransformerFactoryBase : IMediaTransformerFactory
     {
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, IFormatInfoProvider formatInfoProvider, out IMediaTransformer mediaTransformer)
         {
             if (!CanHandleFormat(originalFormat))
             {
@@ -22,7 +23,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
             }
 
             IFormatInfo outputFormat;
-            if( !TryGetOutputFormat(request, originalFormat, out outputFormat) )
+            if( !TryGetOutputFormat(request, originalFormat, formatInfoProvider, out outputFormat) )
             {
                 mediaTransformer = null;
                 return false;
@@ -39,7 +40,7 @@ namespace Bombsquad.DynamicMedia.Implementations.Transformation
         {
             return absolutePath;
         }
-        protected virtual bool TryGetOutputFormat(HttpRequestBase request, IFormatInfo originalFormat, out IFormatInfo outputFormat)
+        protected virtual bool TryGetOutputFormat(HttpRequestBase request, IFormatInfo originalFormat, IFormatInfoProvider formatInfoProvider, out IFormatInfo outputFormat)
         {
             outputFormat = originalFormat;
             return true;

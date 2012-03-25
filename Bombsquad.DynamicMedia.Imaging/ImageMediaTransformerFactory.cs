@@ -35,7 +35,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             _bitmapTransformFactories.Add(factory.OptionKey, factory);
         }
 
-        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, out IMediaTransformer mediaTransformer)
+        public bool TryCreateTransformer(HttpRequestBase request, IFormatInfo originalFormat, IFormatInfoProvider formatInfoProvider, out IMediaTransformer mediaTransformer)
         {
             var transforms = GetBitmapTransforms(request.QueryString).ToArray();
             if (!transforms.Any())
@@ -47,7 +47,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             IFormatInfo outputFormat;
             BitmapEncoder encoder;
 
-            if (!TryGetContentType(originalFormat, request, out outputFormat, out encoder))
+            if (!TryGetContentType(originalFormat, request, formatInfoProvider, out outputFormat, out encoder))
             {
                 mediaTransformer = null;
                 return false;
@@ -88,7 +88,7 @@ namespace Bombsquad.DynamicMedia.Imaging
             }
         } 
 
-        public bool TryGetContentType(IFormatInfo originalFormat, HttpRequestBase request, out IFormatInfo transformedFormat, out BitmapEncoder encoder)
+        public bool TryGetContentType(IFormatInfo originalFormat, HttpRequestBase request, IFormatInfoProvider formatInfoProvider, out IFormatInfo transformedFormat, out BitmapEncoder encoder)
         {
             var format = request.QueryString["format"];
             if (string.IsNullOrEmpty(format))
@@ -105,14 +105,14 @@ namespace Bombsquad.DynamicMedia.Imaging
                         quality = 80;
                     }
 
-                    transformedFormat = new FormatInfo { Extension = ".jpg", ContentType = "image/jpeg" };
+                    transformedFormat = formatInfoProvider.ResolveFromExtension(".jpg");
                     encoder = new JpegBitmapEncoder { QualityLevel = quality };
-                    return true;
+                    return transformedFormat != null;
 
                 case "png":
-                    transformedFormat = new FormatInfo { Extension = ".png", ContentType = "image/png" };
+                    transformedFormat = formatInfoProvider.ResolveFromExtension(".png");
                     encoder = new PngBitmapEncoder();
-                    return true;
+                    return transformedFormat != null;
 
                 default:
                     transformedFormat = null;

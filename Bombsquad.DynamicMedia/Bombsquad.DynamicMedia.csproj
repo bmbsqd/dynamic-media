@@ -36,14 +36,20 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\FormatInfoElement.cs" />
+    <Compile Include="Configuration\FormatInfoElementCollection.cs" />
     <Compile Include="Contracts\Cache\IAddToCacheResult.cs" />
     <Compile Include="Contracts\ETag\IFileInfoETagCalculator.cs" />
+    <Compile Include="Contracts\FormatInfo\ICompression.cs" />
+    <Compile Include="Implementations\Compression\DeflateCompression.cs" />
     <Compile Include="Implementations\ETag\WeakFileInfoETagCalculator.cs" />
+    <Compile Include="Implementations\Compression\GzipCompression.cs" />
     <Compile Include="Implementations\ResultHandlers\CompositeResultHandler.cs" />
     <Compile Include="Configuration\FormatInfoResolverConfiguration.cs" />
     <Compile Include="Contracts\FormatInfo\IFormatInfo.cs" />
-    <Compile Include="Contracts\FormatInfo\IFormatInfoResolver.cs" />
+    <Compile Include="Contracts\FormatInfo\IFormatInfoProvider.cs" />
     <Compile Include="Contracts\Storage\IStorageFile.cs" />
+    <Compile Include="Implementations\ResultHandlers\CompressionResultHandler.cs" />
     <Compile Include="Implementations\ResultHandlers\DefaultResultHandler.cs" />
     <Compile Include="Implementations\ResultHandlers\BytesRangeResultHandler.cs" />
     <Compile Include="Implementations\ResultHandlers\SetCacheHeadersResultHandler.cs" />
@@ -54,9 +60,8 @@
     <Compile Include="Util\StreamExtensions.cs" />
     <Compile Include="Implementations\Transformation\CompositeMediaTransformer.cs" />
     <Compile Include="Implementations\Cache\FileSystemBasedMediaCache.cs" />
-    <Compile Include="Implementations\FormatInfo\FormatInfoResolver.cs" />
+    <Compile Include="Implementations\FormatInfo\FormatInfoProvider.cs" />
     <Compile Include="Implementations\Cache\NullMediaCache.cs" />
-    <Compile Include="Implementations\FormatInfo\FormatInfo.cs" />
     <Compile Include="Contracts\Cache\IMediaCache.cs" />
     <Compile Include="Contracts\Storage\IStorageBackend.cs" />
     <Compile Include="Contracts\Transformation\IMediaTransformer.cs" />
@@ -73,7 +78,9 @@
     <Compile Include="Implementations\Storage\FileSystemStorageBackend.cs" />
     <Compile Include="Implementations\Results\TransmitFileResult.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Contracts\Compression\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
