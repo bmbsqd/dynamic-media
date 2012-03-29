@@ -23,7 +23,7 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
 
         public bool HandleResult(IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response)
         {
-            response.AddHeader("Vary", "Accept-Encoding");
+            response.Cache.VaryByHeaders["Accept-Encoding"] = true;
 
             if (!outputFormat.AllowCompression)
             {

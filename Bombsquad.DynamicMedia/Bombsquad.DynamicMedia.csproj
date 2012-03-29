@@ -42,6 +42,7 @@
     <Compile Include="Contracts\ETag\IFileInfoETagCalculator.cs" />
     <Compile Include="Contracts\FormatInfo\ICompression.cs" />
     <Compile Include="Implementations\Compression\DeflateCompression.cs" />
+    <Compile Include="Implementations\ETag\StrongFileInfoETagCalculator.cs" />
     <Compile Include="Implementations\ETag\WeakFileInfoETagCalculator.cs" />
     <Compile Include="Implementations\Compression\GzipCompression.cs" />
     <Compile Include="Implementations\ResultHandlers\CompositeResultHandler.cs" />

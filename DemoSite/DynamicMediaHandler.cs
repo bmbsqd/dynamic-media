@@ -25,7 +25,7 @@ namespace DemoSite
 		private readonly IMediaCache m_mediaCache;
 		private readonly IStorageBackend m_storageBackend;
 		private readonly IMediaTransformerFactory m_mediaTransformerFactory;
-		private readonly FormatInfoProvider _mFormatInfoProvider;
+		private readonly FormatInfoProvider m_formatInfoProvider;
 
 		public DynamicMediaHandler()
 		{
@@ -49,7 +49,7 @@ namespace DemoSite
                 new MarkdownMediaTransformerFactory()
 			);
 
-			_mFormatInfoProvider = new FormatInfoProvider( (FormatInfoResolverConfiguration) ConfigurationManager.GetSection( "dynamicMediaFormatMappings" ) );
+			m_formatInfoProvider = new FormatInfoProvider( (FormatInfoResolverConfiguration) ConfigurationManager.GetSection( "dynamicMediaFormatMappings" ) );
 		}
 
 		protected override bool CacheOriginals
@@ -74,7 +74,7 @@ namespace DemoSite
 
 		protected override IFormatInfoProvider FormatInfoProvider
 		{
-			get { return _mFormatInfoProvider; }
+			get { return m_formatInfoProvider; }
 		}
 	}
 }

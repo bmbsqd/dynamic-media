@@ -3,22 +3,21 @@ using System.Security.Cryptography;
 using System.Text;
 using Bombsquad.DynamicMedia.Contracts.ETag;
 using System.Linq;
-using Bombsquad.DynamicMedia.Util;
 
 namespace Bombsquad.DynamicMedia.Implementations.ETag
 {
-	public class WeakFileInfoETagCalculator : IFileInfoETagCalculator
+    public class WeakFileInfoETagCalculator : IFileInfoETagCalculator
 	{
-		private readonly HashAlgorithm m_hash;
+		private readonly HashAlgorithm m_hashAlgorithm;
 
-		public WeakFileInfoETagCalculator(HashAlgorithm hash)
+		public WeakFileInfoETagCalculator(HashAlgorithm hashAlgorithm)
 		{
-			m_hash = hash;
+			m_hashAlgorithm = hashAlgorithm;
 		}
 
 		public WeakFileInfoETagCalculator()
 		{
-			m_hash = new SHA1Managed();
+			m_hashAlgorithm = new SHA1Managed();
 		}
 
 		public string CalculateETag( FileInfo file )
@@ -28,7 +27,7 @@ namespace Bombsquad.DynamicMedia.Implementations.ETag
 			material.AppendLine( file.LastWriteTime.Ticks.ToString() );
 			material.AppendLine( file.Length.ToString() );
 
-			var hash = m_hash.ComputeHash( Encoding.UTF8.GetBytes( material.ToString() ) );
+			var hash = m_hashAlgorithm.ComputeHash( Encoding.UTF8.GetBytes( material.ToString() ) );
 			return ETagUtil.CreateWeakETag( new string( hash.SelectMany( b => b.ToString("x2").ToLower() ).ToArray() ) );
 		}
 	}

@@ -12,11 +12,11 @@ namespace Bombsquad.DynamicMedia
 {
     public abstract class DynamicMediaHandlerBase : IHttpHandler
     {
-        private readonly IResultHandler _defaultResultHandler;
+        private readonly IResultHandler m_defaultResultHandler;
 
         protected DynamicMediaHandlerBase()
         {
-            _defaultResultHandler = new CompositeResultHandler(
+            m_defaultResultHandler = new CompositeResultHandler(
                 new CompressionResultHandler(),
                 new SetCacheHeadersResultHandler(), 
                 new NotModifiedResultHandler(),
@@ -26,6 +26,20 @@ namespace Bombsquad.DynamicMedia
         }
 
         public void ProcessRequest(HttpContext context)
+        {
+            switch (context.Request.HttpMethod.ToUpper())
+            {
+                case "GET":
+                    HandleGetRequest(context);
+                    return;
+
+                default:
+                    ServeInvalidMethod(context.Response);
+                    return;
+            }
+        }
+
+        private void HandleGetRequest(HttpContext context)
         {
             var request = new HttpRequestWrapper(context.Request);
             var response = new HttpResponseWrapper(context.Response);
@@ -39,11 +53,12 @@ namespace Bombsquad.DynamicMedia
             }
 
             IMediaTransformer mediaTransformer;
-            var transformMedia = MediaTransformerFactory.TryCreateTransformer(request, originalFormat, FormatInfoProvider, out mediaTransformer);
+            var transformMedia = MediaTransformerFactory.TryCreateTransformer(request, originalFormat, FormatInfoProvider,
+                                                                              out mediaTransformer);
             var outputFormat = transformMedia ? mediaTransformer.OutputFormat : originalFormat;
 
             IResult result;
-            if(TryGetResult(request, outputFormat, transformMedia, mediaTransformer, out result))
+            if (TryGetResult(request, outputFormat, transformMedia, mediaTransformer, out result))
             {
                 ResultHandler.HandleResult(result, outputFormat, request, response);
                 result.Dispose();
@@ -105,7 +120,7 @@ namespace Bombsquad.DynamicMedia
 
         protected abstract bool CacheOriginals { get; }
 
-    	private IResult ServeOriginal(string path, IStorageFile storageFile, IFormatInfo outputFormat)
+        private IResult ServeOriginal(string path, IStorageFile storageFile, IFormatInfo outputFormat)
     	{
     	    var stream = storageFile.GetStream();
 
@@ -137,15 +152,25 @@ namespace Bombsquad.DynamicMedia
         }
 
         protected abstract IMediaCache MediaCache { get; }
+
         protected abstract IStorageBackend StorageBackend { get; }
+
         protected abstract IMediaTransformerFactory MediaTransformerFactory { get; }
+
         protected abstract IFormatInfoProvider FormatInfoProvider { get; }
-        protected virtual IResultHandler ResultHandler { get { return _defaultResultHandler; } }
+
+        protected virtual IResultHandler ResultHandler { get { return m_defaultResultHandler; } }
 
         protected virtual void ServeNotFoundResult(HttpResponseBase response)
         {
             response.StatusCode = 404;
             response.Output.Write("Resource not found.");
+        }
+
+        public virtual void ServeInvalidMethod(HttpResponse response)
+        {
+            response.StatusCode = 405;
+            response.Output.Write("The page you are looking for cannot be displayed because an invalid method (HTTP verb) was used to attempt access.");
         }
 
         public bool IsReusable
