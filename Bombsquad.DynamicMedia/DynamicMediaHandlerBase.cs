@@ -44,7 +44,8 @@ namespace Bombsquad.DynamicMedia
             var request = new HttpRequestWrapper(context.Request);
             var response = new HttpResponseWrapper(context.Response);
 
-            var originalFormat = FormatInfoProvider.ResolveFromExtension(Path.GetExtension(request.Url.AbsolutePath));
+        	var absolutePath = HttpUtility.UrlDecode( request.Url.AbsolutePath );
+        	var originalFormat = FormatInfoProvider.ResolveFromExtension(Path.GetExtension(absolutePath));
 
             if (originalFormat == null)
             {
@@ -71,12 +72,12 @@ namespace Bombsquad.DynamicMedia
 
         private static string GetRequestPath(HttpRequestBase request)
         {
-            return request.Url.PathAndQuery;
+        	return HttpUtility.UrlDecode( request.Url.PathAndQuery );
         }
 
         private static string GetOriginalPath(HttpRequestBase request, IMediaTransformer mediaTransformer)
         {
-            var path = request.Url.AbsolutePath;
+        	var path = HttpUtility.UrlDecode( request.Url.AbsolutePath );
 
             if (mediaTransformer != null)
             {
