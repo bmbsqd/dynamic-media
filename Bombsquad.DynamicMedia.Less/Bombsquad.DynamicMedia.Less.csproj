@@ -35,7 +35,6 @@
       <HintPath>..\packages\dotless.1.2.1.0\lib\dotless.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CssLessMediaTransformerFactory.cs" />

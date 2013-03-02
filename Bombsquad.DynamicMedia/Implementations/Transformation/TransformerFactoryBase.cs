@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts.FormatInfo;

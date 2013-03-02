@@ -15,7 +15,7 @@ namespace Bombsquad.DynamicMedia.Configuration
             return ((FormatInfoElement)element).Extension;
         }
 
-        public IEnumerator<FormatInfoElement> GetEnumerator()
+        public new IEnumerator<FormatInfoElement> GetEnumerator()
         {
             for(var i = 0; i < Count; i++)
             {

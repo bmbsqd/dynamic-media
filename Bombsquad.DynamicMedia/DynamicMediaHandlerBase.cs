@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Web;
 using Bombsquad.DynamicMedia.Contracts;
 using Bombsquad.DynamicMedia.Contracts.Cache;
@@ -10,173 +11,187 @@ using Bombsquad.DynamicMedia.Implementations.Results;
 
 namespace Bombsquad.DynamicMedia
 {
-    public abstract class DynamicMediaHandlerBase : IHttpHandler
-    {
-        private readonly IResultHandler m_defaultResultHandler;
+	public abstract class DynamicMediaHandlerBase : IHttpHandler
+	{
+		private readonly IResultHandler m_defaultResultHandler;
 
-        protected DynamicMediaHandlerBase()
-        {
-            m_defaultResultHandler = new CompositeResultHandler(
-                new CompressionResultHandler(),
-                new SetCacheHeadersResultHandler(), 
-                new NotModifiedResultHandler(),
-                new SetContentTypeHeaderResultHandler(),
-                new BytesRangeResultHandler(),
-                new DefaultResultHandler());
-        }
+		protected DynamicMediaHandlerBase()
+		{
+			m_defaultResultHandler = new CompositeResultHandler( new CompressionResultHandler(), new SetCacheHeadersResultHandler(), new NotModifiedResultHandler(),
+				new SetContentTypeHeaderResultHandler(), new BytesRangeResultHandler(), new DefaultResultHandler() );
+		}
 
-        public void ProcessRequest(HttpContext context)
-        {
-            switch (context.Request.HttpMethod.ToUpper())
-            {
-                case "GET":
-                    HandleGetRequest(context);
-                    return;
+		public void ProcessRequest( HttpContext context )
+		{
+			switch ( context.Request.HttpMethod.ToUpper() )
+			{
+				case "HEAD":
+					HandleGetRequest( context, r => new HeadResultWrapper( r ) );
+					return;
 
-                default:
-                    ServeInvalidMethod(context.Response);
-                    return;
-            }
-        }
+				case "GET":
+					HandleGetRequest( context, r => r );
+					return;
 
-        private void HandleGetRequest(HttpContext context)
-        {
-            var request = new HttpRequestWrapper(context.Request);
-            var response = new HttpResponseWrapper(context.Response);
+				default:
+					ServeInvalidMethod( context.Response );
+					return;
+			}
+		}
 
-        	var absolutePath = HttpUtility.UrlDecode( request.Url.AbsolutePath );
-        	var originalFormat = FormatInfoProvider.ResolveFromExtension(Path.GetExtension(absolutePath));
+		private void HandleGetRequest( HttpContext context, Func<IResult,IResult> resultWrapper )
+		{
+			var request = new HttpRequestWrapper( context.Request );
+			var response = new HttpResponseWrapper( context.Response );
 
-            if (originalFormat == null)
-            {
-                ServeNotFoundResult(response);
-                return;
-            }
+			var absolutePath = HttpUtility.UrlDecode( request.Url.AbsolutePath );
+			var originalFormat = FormatInfoProvider.ResolveFromExtension( Path.GetExtension( absolutePath ) );
 
-            IMediaTransformer mediaTransformer;
-            var transformMedia = MediaTransformerFactory.TryCreateTransformer(request, originalFormat, FormatInfoProvider,
-                                                                              out mediaTransformer);
-            var outputFormat = transformMedia ? mediaTransformer.OutputFormat : originalFormat;
+			if ( originalFormat == null )
+			{
+				ServeIllegalExtensionResult( response );
+				return;
+			}
 
-            IResult result;
-            if (TryGetResult(request, outputFormat, transformMedia, mediaTransformer, out result))
-            {
-                ResultHandler.HandleResult(result, outputFormat, request, response);
-                result.Dispose();
-            }
-            else
-            {
-                ServeNotFoundResult(response);
-            }
-        }
+			IMediaTransformer mediaTransformer;
+			var transformMedia = MediaTransformerFactory.TryCreateTransformer( request, originalFormat, FormatInfoProvider, out mediaTransformer );
+			var outputFormat = transformMedia ? mediaTransformer.OutputFormat : originalFormat;
 
-        private static string GetRequestPath(HttpRequestBase request)
-        {
-        	return HttpUtility.UrlDecode( request.Url.PathAndQuery );
-        }
+			IResult result;
+			if ( TryGetResult( request, outputFormat, transformMedia, mediaTransformer, out result ) )
+			{
+				result = resultWrapper( result );
+				ResultHandler.HandleResult( result, outputFormat, request, response );
+				result.Dispose();
+			}
+			else
+			{
+				ServeNotFoundResult( response );
+			}
+		}
 
-        private static string GetOriginalPath(HttpRequestBase request, IMediaTransformer mediaTransformer)
-        {
-        	var path = HttpUtility.UrlDecode( request.Url.AbsolutePath );
+		private static string GetRequestPath( HttpRequestBase request )
+		{
+			return HttpUtility.UrlDecode( request.Url.PathAndQuery );
+		}
 
-            if (mediaTransformer != null)
-            {
-                path = mediaTransformer.ModifyAbsolutePath(path);
-            }
+		private static string GetOriginalPath( HttpRequestBase request, IMediaTransformer mediaTransformer )
+		{
+			var path = HttpUtility.UrlDecode( request.Url.AbsolutePath );
 
-            return path;
-        }
+			if ( mediaTransformer != null )
+			{
+				path = mediaTransformer.ModifyAbsolutePath( path );
+			}
 
-        private bool TryGetResult(HttpRequestBase request, IFormatInfo outputFormat, bool transformMedia, IMediaTransformer mediaTransformer, out IResult result)
-        {
-            var path = GetRequestPath(request) ;
-            var originalPath = GetOriginalPath(request, mediaTransformer);
+			return path;
+		}
 
-            if (MediaCache.TryServeRequestFromCache(transformMedia ? path : originalPath, outputFormat, out result))
-            {
-                return true;
-            }
+		private bool TryGetResult( HttpRequestBase request, IFormatInfo outputFormat, bool transformMedia, IMediaTransformer mediaTransformer, out IResult result )
+		{
+			var path = GetRequestPath( request );
+			var originalPath = GetOriginalPath( request, mediaTransformer );
+
+			if ( MediaCache.TryServeRequestFromCache( transformMedia ? path : originalPath, outputFormat, out result ) )
+			{
+				return true;
+			}
 
 			IStorageFile storageFile;
-			if(!StorageBackend.TryGetStorageFile(originalPath , out storageFile ))
+			if ( !StorageBackend.TryGetStorageFile( originalPath, out storageFile ) )
 			{
 				return false;
 			}
 
-            if (!transformMedia && !CacheOriginals)
-            {
-            	result = storageFile;
-            	return true;
-            }
-            
-            if (transformMedia)
-            {
-                result = TransformMedia(storageFile.GetStream(), outputFormat, path, mediaTransformer);
-                return true;
-            }
-            
-            result = ServeOriginal(originalPath, storageFile, outputFormat);
-            return true;
-        }
+			if ( !transformMedia && !CacheOriginals )
+			{
+				result = storageFile;
+				return true;
+			}
 
-        protected abstract bool CacheOriginals { get; }
+			if ( transformMedia )
+			{
+				result = TransformMedia( storageFile.GetStream(), outputFormat, path, mediaTransformer );
+				return true;
+			}
 
-        private IResult ServeOriginal(string path, IStorageFile storageFile, IFormatInfo outputFormat)
-    	{
-    	    var stream = storageFile.GetStream();
+			result = ServeOriginal( originalPath, storageFile, outputFormat );
+			return true;
+		}
 
-            IAddToCacheResult cacheResult;
-    	    if( MediaCache.TryAddToCache( path, stream, outputFormat, out cacheResult ) )
-            {
-				return new CopyToOutputStreamResult( cacheResult.LastModified, cacheResult.ETag, storageFile.ContentLength, stream);
-            }
+		protected abstract bool CacheOriginals { get; }
 
-            return storageFile;
-        }
+		private IResult ServeOriginal( string path, IStorageFile storageFile, IFormatInfo outputFormat )
+		{
+			var stream = storageFile.GetStream();
 
-        private IResult TransformMedia(Stream original, IFormatInfo outputFormat, string path, IMediaTransformer mediaTransformer)
-        {
-            Stream stream;
-            var transformResult = mediaTransformer.TransformStream(original, out stream);
-            original.Dispose();
+			IAddToCacheResult cacheResult;
+			if ( MediaCache.TryAddToCache( path, stream, outputFormat, out cacheResult ) )
+			{
+				return new CopyToOutputStreamResult( cacheResult.LastModified, cacheResult.ETag, storageFile.ContentLength, stream );
+			}
 
-            if (transformResult == MediaTransformResult.Success)
-            {
-                IAddToCacheResult cacheResult;
-                if(MediaCache.TryAddToCache(path, stream, outputFormat, out cacheResult))
-                {
-                    return new CopyToOutputStreamResult(cacheResult.LastModified, cacheResult.ETag, stream.Length, stream);
-                }
-            }
+			return storageFile;
+		}
 
-            return new CopyToOutputStreamResult(null, null, stream.Length, stream);
-        }
+		private IResult TransformMedia( Stream original, IFormatInfo outputFormat, string path, IMediaTransformer mediaTransformer )
+		{
+			Stream stream;
+			var transformResult = mediaTransformer.TransformStream( original, out stream );
+			original.Dispose();
 
-        protected abstract IMediaCache MediaCache { get; }
+			if ( transformResult == MediaTransformResult.Success )
+			{
+				IAddToCacheResult cacheResult;
+				if ( MediaCache.TryAddToCache( path, stream, outputFormat, out cacheResult ) )
+				{
+					return new CopyToOutputStreamResult( cacheResult.LastModified, cacheResult.ETag, stream.Length, stream );
+				}
+			}
 
-        protected abstract IStorageBackend StorageBackend { get; }
+			return new CopyToOutputStreamResult( null, null, stream.Length, stream );
+		}
 
-        protected abstract IMediaTransformerFactory MediaTransformerFactory { get; }
+		protected abstract IMediaCache MediaCache { get; }
 
-        protected abstract IFormatInfoProvider FormatInfoProvider { get; }
+		protected abstract IStorageBackend StorageBackend { get; }
 
-        protected virtual IResultHandler ResultHandler { get { return m_defaultResultHandler; } }
+		protected abstract IMediaTransformerFactory MediaTransformerFactory { get; }
 
-        protected virtual void ServeNotFoundResult(HttpResponseBase response)
-        {
-            response.StatusCode = 404;
-            response.Output.Write("Resource not found.");
-        }
+		protected abstract IFormatInfoProvider FormatInfoProvider { get; }
 
-        public virtual void ServeInvalidMethod(HttpResponse response)
-        {
-            response.StatusCode = 405;
-            response.Output.Write("The page you are looking for cannot be displayed because an invalid method (HTTP verb) was used to attempt access.");
-        }
+		protected virtual IResultHandler ResultHandler
+		{
+			get
+			{
+				return m_defaultResultHandler;
+			}
+		}
 
-        public bool IsReusable
-        {
-            get { return true; }
-        }
-    }
+		protected virtual void ServeIllegalExtensionResult( HttpResponseBase response )
+		{
+			response.StatusCode = 404;
+			response.Output.Write( "Illegal file extension." );
+		}
+
+		protected virtual void ServeNotFoundResult( HttpResponseBase response )
+		{
+			response.StatusCode = 404;
+			response.Output.Write( "Resource not found." );
+		}
+
+		public virtual void ServeInvalidMethod( HttpResponse response )
+		{
+			response.StatusCode = 405;
+			response.Output.Write( "The page you are looking for cannot be displayed because an invalid method (HTTP verb) was used to attempt access." );
+		}
+
+		public bool IsReusable
+		{
+			get
+			{
+				return true;
+			}
+		}
+	}
 }

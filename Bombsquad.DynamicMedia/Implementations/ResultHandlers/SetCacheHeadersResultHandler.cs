@@ -9,13 +9,14 @@ namespace Bombsquad.DynamicMedia.Implementations.ResultHandlers
     {
         public bool HandleResult(IResult result, IFormatInfo outputFormat, HttpRequestBase request, HttpResponseBase response)
         {
-            response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
+			response.Cache.SetCacheability( HttpCacheability.Public );
 
-            if (outputFormat.ClientCacheMaxAge.HasValue)
-            {
-                response.Cache.SetExpires(DateTime.Now.Add(outputFormat.ClientCacheMaxAge.Value));
-                response.Cache.SetMaxAge(outputFormat.ClientCacheMaxAge.Value);
-            }
+			if ( outputFormat.ClientCacheMaxAge.HasValue )
+			{
+				response.Cache.SetNoServerCaching();
+				response.Cache.SetExpires( DateTime.Now.Add( outputFormat.ClientCacheMaxAge.Value ) );
+				response.Cache.SetMaxAge( outputFormat.ClientCacheMaxAge.Value );
+			}
 
             if (result.LastModified.HasValue)
             {

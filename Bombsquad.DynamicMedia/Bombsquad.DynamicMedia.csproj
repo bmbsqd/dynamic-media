@@ -41,6 +41,8 @@
     <Compile Include="Contracts\Cache\IAddToCacheResult.cs" />
     <Compile Include="Contracts\ETag\IFileInfoETagCalculator.cs" />
     <Compile Include="Contracts\FormatInfo\ICompression.cs" />
+    <Compile Include="Implementations\FormatInfo\RegistryFormatInfoProvider.cs" />
+    <Compile Include="Implementations\Results\HeadResultWrapper.cs" />
     <Compile Include="Implementations\Compression\DeflateCompression.cs" />
     <Compile Include="Implementations\ETag\StrongFileInfoETagCalculator.cs" />
     <Compile Include="Implementations\ETag\WeakFileInfoETagCalculator.cs" />

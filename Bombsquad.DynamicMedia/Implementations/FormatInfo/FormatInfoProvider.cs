@@ -6,7 +6,7 @@ using Bombsquad.DynamicMedia.Contracts.FormatInfo;
 
 namespace Bombsquad.DynamicMedia.Implementations.FormatInfo
 {
-    public class FormatInfoProvider : IFormatInfoProvider
+	public class FormatInfoProvider : IFormatInfoProvider
     {
         private readonly IDictionary<string, FormatInfoElement> m_lookupFromExtension;
 

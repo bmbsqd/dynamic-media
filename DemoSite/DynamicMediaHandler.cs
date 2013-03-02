@@ -25,7 +25,7 @@ namespace DemoSite
 		private readonly IMediaCache m_mediaCache;
 		private readonly IStorageBackend m_storageBackend;
 		private readonly IMediaTransformerFactory m_mediaTransformerFactory;
-		private readonly FormatInfoProvider m_formatInfoProvider;
+		private readonly IFormatInfoProvider m_formatInfoProvider;
 
 		public DynamicMediaHandler()
 		{
@@ -36,7 +36,9 @@ namespace DemoSite
 
 			m_mediaCache = new FileSystemMediaCache(etagCalculator, cacheRoot);
             //m_mediaCache = new NullMediaCache();
+
 		    m_storageBackend = new FileSystemStorageBackend( storageRoot, etagCalculator );
+
 			m_mediaTransformerFactory = new CompositeMediaTransformerFactory(
 				new XmlExifImageInfoMediaTransformer(), 
                 new JsonExifImageInfoMediaTransformer(),
@@ -50,6 +52,7 @@ namespace DemoSite
 			);
 
 			m_formatInfoProvider = new FormatInfoProvider( (FormatInfoResolverConfiguration) ConfigurationManager.GetSection( "dynamicMediaFormatMappings" ) );
+			//m_formatInfoProvider = new RegistryFormatInfoProvider(null);
 		}
 
 		protected override bool CacheOriginals

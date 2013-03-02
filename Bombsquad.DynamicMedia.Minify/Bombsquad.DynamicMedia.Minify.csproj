@@ -35,7 +35,6 @@
       <HintPath>..\packages\AjaxMin.4.37.4345.34101\lib\net20\AjaxMin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CssMinifyingMediaTransformerFactory.cs" />
