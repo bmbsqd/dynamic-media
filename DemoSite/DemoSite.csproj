@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Storage\BackgroundImage.css" />
+    <Content Include="packages.config" />
     <None Include="Storage\Examples.md" />
     <Content Include="Storage\Imports.css" />
     <Content Include="Storage\Examples.html" />
@@ -89,9 +90,10 @@
     <Folder Include="Cache\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="dotless.Core, Version=1.3.1.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\dotless.1.3.1.0\lib\dotless.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />

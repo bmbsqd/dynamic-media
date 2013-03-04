@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>Bombsquad.DynamicMedia.Imaging</id>
+    <version>1.0</version>
+    <authors>Henrik Jönsson</authors>
+    <owners>Bombsquad AB</owners>
+    <projectUrl>https://github.com/bmbsqd/dynamic-media</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>On-the-fly image scaling and transformation, less to css, minify of javascripts, etc.</description>
+    <tags>media images transformation exif scaling less minify</tags>
+    <dependencies>
+      <dependency id="Bombsquad.DynamicMedia.Core" version="1.0" />
+    </dependencies>
+  </metadata>
+</package>

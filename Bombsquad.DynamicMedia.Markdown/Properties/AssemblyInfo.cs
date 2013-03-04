@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Bombsquad.DynamicMedia.Markdown")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany( "Bombsquad AB" )]
 [assembly: AssemblyProduct("Bombsquad.DynamicMedia.Markdown")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright( "Copyright © 2013" )]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
